@@ -12,10 +12,13 @@ DISCLAIMER: The Houston Fire Department data is private and cannot be posted to 
 1. Clone repository to your local machine
 2. Install dependencies:
 
-```
-pip install seaborn
-```
+      ```
+      pip install seaborn
+      ```
 
-3. Open terminal and run `jupyter notebook`
-4. Open the file `HFDDataCleaning(ViolationComments).ipynb` 
-5. Run each of the code blocks to generate visuals based on the dataset
+3. Open terminal and run 
+      ```
+      jupyter notebook
+      ```
+5. Open the file `HFDDataCleaning(ViolationComments).ipynb` 
+6. Run each of the code blocks to generate visuals based on the dataset
