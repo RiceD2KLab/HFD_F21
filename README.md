@@ -3,7 +3,7 @@
 
 This is our repository that contains the code for our capstone project: <br /> **Analyzing Fire Inspections for the Houston Fire Department**
 
-STATUS: We have completed data cleaning and are currently undergoing exploratory data analysis. 
+STATUS: We have cleaned our data and are currently undergoing exploratory data analysis. 
 
 DISCLAIMER: The Houston Fire Department data is private and cannot be posted to a public repository. In order to run our jupyter notebook and generate the diagrams we made for the dataset we were given, please locate and download the file `Address_&_Violation_Records_data 2020.csv`.
 
