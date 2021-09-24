@@ -1,7 +1,7 @@
 # Houston Fire Department - Fall 2021
 #### Members: Hannah Lei, Mingzhao Liu, Yikun Li, Sacheth Reddy Mamidi, Parth Parulekar
 
-This is our repository that contains the code for our capstone project: **Analyzing Fire Inspections for the Houston Fire Department**
+This is our repository that contains the code for our capstone project: <br /> **Analyzing Fire Inspections for the Houston Fire Department**
 
 STATUS: We have completed data cleaning and are currently undergoing exploratory data analysis. 
 
@@ -17,4 +17,5 @@ pip install seaborn
 ```
 
 3. Open terminal and run `jupyter notebook`
-4. Open the file `HFDDataCleaning(ViolationComments).ipynb` and run each of the code blocks 
+4. Open the file `HFDDataCleaning(ViolationComments).ipynb` 
+5. Run each of the code blocks to generate visuals based on the dataset
