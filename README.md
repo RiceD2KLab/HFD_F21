@@ -9,7 +9,7 @@ STATUS: We have cleaned our data and are currently undergoing exploratory data a
 
 DISCLAIMER: The Houston Fire Department data is private and cannot be posted to a public repository. In order to run our jupyter notebook and generate the diagrams we made for the dataset we were given, please locate and download the file `Address_&_Violation_Records_data 2020.csv`.
 
-## Steps to Run Jupyter Notebook 
+## Steps to Run Jupyter Notebook and Generate Visuals for Software Check I 
 
 1. Clone repository to your local machine
 2. Install dependencies:
