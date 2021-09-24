@@ -1,4 +1,6 @@
 # Houston Fire Department - Fall 2021
+![HFD logo](http://houstontx.gov/fire/indeximages/newlogo.jpg)
+
 #### Members: Hannah Lei, Mingzhao Liu, Yikun Li, Sacheth Reddy Mamidi, Parth Parulekar
 
 This is our repository that contains the code for our capstone project: <br /> **Analyzing Fire Inspections for the Houston Fire Department**
