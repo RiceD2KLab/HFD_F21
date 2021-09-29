@@ -7,6 +7,7 @@
 import numpy as np
 import pandas as pd
 
+# Legend provided below for the full forms of acronyms in our data
 legend = {"NoData": "No Data",
           "ChildDayCa": "Daycares",
           "SafetySurv": "Safety Surveillance",
@@ -18,8 +19,6 @@ legend = {"NoData": "No Data",
           "SiteInsRen": "Site Reinspection",
           "SiteInsp": "Site",
           "InspReview": "Inspection Review"}
-
-# common_v_codes = ["No Data", "Daycares", "Safety Surveillance", "Mobile Food Unit", "Assisted Living", "School Building"]
 
 # import both the 2020 and 2021 datasets into dataframes
 data2020 = pd.read_csv(r"Address_&_Violation_Records_data 2020.csv")
