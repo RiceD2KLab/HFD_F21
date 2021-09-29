@@ -518,6 +518,7 @@ unique_Emp_Data
 
 
 unique_Emp_Data = pd.DataFrame(unique_Emp_Data)
+unique_Emp_Data.columns=['FULLNAME','EMP_NO','SUPERVISOR','TEAMDESCRIPTION']
 unique_Emp_Data.to_csv('unique_Emp_Data_with_team_description.csv')
 
 
@@ -527,7 +528,8 @@ unique_Emp_Data.to_csv('unique_Emp_Data_with_team_description.csv')
 #unique_Emp_Data.groupby('')
 team_distribution = pd.read_csv('unique_Emp_Data_with_team_description.csv')
 team_distribution  = team_distribution.groupby(by = ['TEAMDESCRIPTION']).count()
-team_distribution['index']
+#team_distribution['index']
+team_distribution['FULLNAME']
 
 
 # In[76]:
@@ -543,7 +545,8 @@ team_distribution
 
 
 #Then write the data to a csv for further exploration using trees
-team_distribution = team_distribution2.groupby(['TEAMDESCRIPTION','SUPERVISOR','FULLNAME'])['EMP NO'].count()
+team_distribution = team_distribution2.groupby(['TEAMDESCRIPTION','SUPERVISOR','FULLNAME'])['EMP_NO'].count()
+team_distribution.columns=['TEAMDESCRIPTION','SUPERVISOR','FULLNAME']
 team_distribution.to_csv('unique_Emp_Data_with_team_description_categorized.csv')
 
 
@@ -552,7 +555,7 @@ team_distribution.to_csv('unique_Emp_Data_with_team_description_categorized.csv'
 
 #read from the csv to plot based onn the team composition
 team = pd.read_csv('unique_Emp_Data_with_team_description_categorized.csv')
-team_distribution = team['TEAM'].value_counts().plot(kind = 'pie')
+team_distribution = team['TEAMDESCRIPTION'].value_counts().plot(kind = 'pie')
 # pie chart based on the number of team members in each team
 
 
@@ -560,7 +563,7 @@ team_distribution = team['TEAM'].value_counts().plot(kind = 'pie')
 
 
 #plot the team distrbution graph based on number of members
-team_distribution = team['TEAM'].value_counts().plot(kind = 'bar')
+team_distribution = team['TEAMDESCRIPTION'].value_counts().plot(kind = 'bar')
 plt.xlabel('Team names')
 plt.xlabel('Number of members in the team')
 plt.show()
@@ -589,10 +592,4 @@ Violation_data['VIOLATIONCode - Split 1'] = Violation_data['VIOLATIONCode - Spli
 Violation_data['VIOLATIONCode - Split 1'].value_counts().plot(kind='bar')
 plt.xlabel('violation code')
 plt.ylabel('frequency')
-
-
-# In[ ]:
-
-
-
 
