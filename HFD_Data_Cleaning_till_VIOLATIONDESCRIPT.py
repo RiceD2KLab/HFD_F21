@@ -12,7 +12,12 @@ legend = {"NoData": "No Data",
           "SafetySurv": "Safety Surveillance",
           "L1 MFU": "Mobile Food Unit",
           "AssistedLi": "Assisted Living",
-          "SchoolBldg": "School Building"}
+          "SchoolBldg": "School Building",
+          "HIST": "Historic",
+          "FollowUp": "Follow Up",
+          "SiteInsRen": "Site Reinspection",
+          "SiteInsp": "Site",
+          "InspReview": "Inspection Review"}
 
 # common_v_codes = ["No Data", "Daycares", "Safety Surveillance", "Mobile Food Unit", "Assisted Living", "School Building"]
 
@@ -77,7 +82,7 @@ for ind in range(len(Violation_code.index)):
 bp = sns.barplot(common_v_codes, Violation_code.values, alpha=0.8)
 plt.xticks(fontsize=18)
 plt.yticks(fontsize=18)
-bp.set_title("Distribution of the 6 most common Violation Codes", fontsize=20)
+bp.set_title("6 Most Common Violation Codes", fontsize=20)
 plt.ylabel('Number of Occurrences', fontsize=20)
 plt.xlabel('Violation Code', fontsize=20)
 plt.show()
@@ -101,9 +106,11 @@ Violation_data.shape
 # create a bar graph based on the inspection decriptions of all the violation data
 Violation_descript = Violation_data['DESCRIPT'].value_counts()
 Violation_descript = Violation_descript[:9, ]
-plt.figure(figsize=(20, 5))
+plt.figure(figsize=(35, 10))
 sns.barplot(Violation_descript.index, Violation_descript.values, alpha=0.8)
-plt.title("Distribution of the 9 most common Inspection Descriptions")
+plt.title("9 Most Common Inspection Descriptions", fontsize=20)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
 plt.ylabel('Number of Occurrences', fontsize=20)
 plt.xlabel('Inspection Description', fontsize=20)
 plt.show()
@@ -251,11 +258,13 @@ Violation_data['INSPTYPECAT'].value_counts(dropna=False)
 # Create a bar graph for the Inspection type categories in the data
 Violation_INSPTYPECAT = Violation_data['INSPTYPECAT'].value_counts()
 Violation_INSPTYPECAT = Violation_INSPTYPECAT[:7, ]
-plt.figure(figsize=(17, 5))
+plt.figure(figsize=(25, 12))
 sns.barplot(Violation_INSPTYPECAT.index, Violation_INSPTYPECAT.values, alpha=0.8)
-plt.title("Distribution of the 7 most occuring Violation Inspection Type Category")
-plt.ylabel('Number of Occurrences', fontsize=12)
-plt.xlabel("Violation inspection Type categories")
+plt.title("7 Most Common Violation Inspection Types", fontsize=20)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+plt.ylabel('Number of Occurrences', fontsize=20)
+plt.xlabel("Violation Inspection Types", fontsize=20)
 plt.show()
 
 # In[44]:
@@ -268,11 +277,16 @@ Violation_data['INSPTYPE'].value_counts(dropna=False)
 # As there are no empty values no changes need to be made for INSPTYPE
 Violation_INSPTYPE = Violation_data['INSPTYPE'].value_counts()
 Violation_INSPTYPE = Violation_INSPTYPE[:10, ]
-plt.figure(figsize=(17, 5))
-sns.barplot(Violation_INSPTYPE.index, Violation_INSPTYPE.values, alpha=0.8)
-plt.title("Distribution of the 8 Violation Inspection Type's")
-plt.ylabel('Number of Occurrences', fontsize=12)
-plt.xlabel("Violation inspection Type's from the column 'INSPTYPE'")
+plt.figure(figsize=(20, 10))
+common_insp_types = []
+for insp_type in Violation_INSPTYPE.index:
+    common_insp_types.append(legend.get(insp_type, insp_type))
+sns.barplot(common_insp_types, Violation_INSPTYPE.values, alpha=0.8)
+plt.title("Violation Inspection Types", fontsize=20)
+plt.ylabel('Number of Occurrences', fontsize=20)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+plt.xlabel("Violation inspection Types", fontsize=20)
 plt.show()
 
 # In[45]:
