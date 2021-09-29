@@ -25,10 +25,7 @@ data2021.head()
 data = data2020["STNO"] + " " + data2020["PREDIR"]+ " " + data2020["STNAME"] + " " + data2020["SUFFIX"]+". "+ data2020["CITY"] +", " + data2020["STATE"] + ", " + data2020["ZIP"]
 if "NaN " in data:
   data.replace("NaN ", "")
-data
 
-from google.colab import drive
-drive.mount('/content/drive')
 
 data2020["Full Address"] = data
 
