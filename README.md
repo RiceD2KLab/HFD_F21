@@ -10,12 +10,13 @@ DISCLAIMER: The Houston Fire Department data is private and cannot be posted to 
 ## Steps to Run our Python Code
 
 1. Clone repository to your local machine
-2. Install dependencies:
+2. Install dependencies with the following commands:
 
 ```
 pip install seaborn
 pip install pandas
 pip install numpy
+pip install matplotlib
 ```
 
 3. Open terminal and run `python HFD_Data_Cleaning_till_VIOLATIONDESCRIPT.py`
