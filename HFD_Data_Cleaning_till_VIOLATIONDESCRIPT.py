@@ -7,6 +7,14 @@
 import numpy as np
 import pandas as pd
 
+legend = {"NoData": "No Data",
+          "ChildDayCa": "Daycares",
+          "SafetySurv": "Safety Surveillance",
+          "L1 MFU": "Mobile Food Unit",
+          "AssistedLi": "Assisted Living",
+          "SchoolBldg": "School Building"}
+
+# common_v_codes = ["No Data", "Daycares", "Safety Surveillance", "Mobile Food Unit", "Assisted Living", "School Building"]
 
 #import both the 2020 and 2021 datasets into dataframes
 data2020 = pd.read_csv(r"Address_&_Violation_Records_data 2020.csv")
@@ -62,13 +70,18 @@ Violation_data['Code'].value_counts().plot(kind='barh')
 #create a bar graph based on the occurences of top 6 codes of violation
 import matplotlib.pyplot as plt
 import seaborn as sns
-Violation_code  = Violation_data['Code'].value_counts()
+
+Violation_code = Violation_data['Code'].value_counts()
 Violation_code = Violation_code[:6,]
-plt.figure(figsize=(10,5))
-sns.barplot(Violation_code.index, Violation_code.values, alpha=0.8)
-plt.title("Distribution of the 6 most occuring Violation Code's in the data")
-plt.ylabel('Number of Occurrences', fontsize=12)
-plt.xlabel('Violation Code', fontsize=12)
+plt.figure(figsize=(20,10))
+# common_v_codes = ["No Data", "Daycares", "Safety Surveillance", "Mobile Food Unit", "Assisted Living", "School Building"]
+common_v_codes = []
+for ind in range(len(Violation_code.index)):
+    common_v_codes.append(legend[Violation_code.index[ind]])
+sns.barplot(common_v_codes, Violation_code.values, alpha=0.8)
+plt.title("Distribution of the 6 most common Violation Codes")
+plt.ylabel('Number of Occurrences', fontsize=15)
+plt.xlabel('Violation Code', fontsize=15)
 plt.show()
 
 
