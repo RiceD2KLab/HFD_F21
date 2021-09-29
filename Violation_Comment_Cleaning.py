@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[12]:
 
 
 import numpy as np
 import pandas as pd
-
+import re
 
 #import both the 2020 and 2021 datasets into dataframes
 data2020 = pd.read_csv(r"Address_&_Violation_Records_data 2020.csv")
@@ -21,16 +20,9 @@ Violation_data = data2020.append(data2021, ignore_index = True)
 Violation_data.head()
 
 
-# In[15]:
 
 
 
-
-
-# In[16]:
-
-
-import re
 def cleanhtml(raw_html):
   cleanr = re.compile('<.*?>')
   cleantext = re.sub(cleanr, '', raw_html)
@@ -61,14 +53,6 @@ Violation_data.to_excel('ViolationComment2020and2021new.xlsx', encoding='utf-8-s
 
 Violation_data['ViolationComment'].to_excel('ViolationComment2020and2021_onlyComments.xlsx', encoding='utf-8-sig')
 
-
-# In[18]:
-
-
-
-
-
-# In[20]:
 
 
 
