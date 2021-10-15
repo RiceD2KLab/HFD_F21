@@ -102,12 +102,12 @@ Violation_data.shape
 # In[94]:
 
 
-# create a bar graph based on the inspection decriptions of all the violation data
+# create a bar graph based on the inspection descriptions of all the violation data
 Violation_descript = Violation_data['DESCRIPT'].value_counts()
-Violation_descript = Violation_descript[:9, ]
+Violation_descript = Violation_descript[:7, ]
 plt.figure(figsize=(35, 10))
 sns.barplot(Violation_descript.index, Violation_descript.values, alpha=0.8)
-plt.title("9 Most Common Inspection Descriptions", fontsize=20)
+plt.title("7 Most Common Inspection Descriptions", fontsize=20)
 plt.xticks(fontsize=18)
 plt.yticks(fontsize=18)
 plt.ylabel('Number of Occurrences', fontsize=20)
