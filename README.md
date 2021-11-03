@@ -7,12 +7,12 @@ This is our repository that contains the code for our capstone project: <br /> *
 
 STATUS: We have cleaned our data and are currently undergoing exploratory data analysis. 
 
-DISCLAIMER: The Houston Fire Department data is private and cannot be posted to a public repository. In order to run our jupyter notebook and generate the diagrams we made for the dataset we were given, please locate and download the file `Address_&_Violation_Records_data 2020.csv`.
+DISCLAIMER: The Houston Fire Department data is private and cannot be posted to a public repository. In order to run our files and generate diagrams based on the dataset we were given, please locate and download the files `Address_&_Violation_Records_data 2020.csv` and `Address_&_Violation_Records_data 2021.csv`.
 
 ## Steps to Run Jupyter Notebook and Generate Visuals for Software Check I 
 
 1. Clone repository to your local machine
-2. Install dependencies:
+2. Install dependencies with the following commands:
 
       ```
       pip install seaborn
