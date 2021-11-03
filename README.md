@@ -17,6 +17,8 @@ pip install seaborn
 pip install pandas
 pip install numpy
 pip install matplotlib
+pip install geopandas
+pip install plotly 
 ```
 
 3. Open terminal and run `python HFD_Data_Cleaning_till_VIOLATIONDESCRIPT.py`
@@ -26,3 +28,12 @@ pip install matplotlib
 5. Alternatively, you may open HFD_Data_Cleaning_till_VIOLATIONDESCRIPT.py in an IDE 
    such as Visual Studio Code and run each of the code blocks to generate visuals based on    the dataset in a readable format.
 
+
+### For the interactive maps
+1. Run the create shape file to get a silhouette of Houston in .shp
+
+2. Run the create cav to get the required data to create the interactive map
+
+3. Run the testGeoPy file to get the HTML outputs 
+
+4. Run the Integrate.html file to see the website where the interactive maps of each team can be selected 
