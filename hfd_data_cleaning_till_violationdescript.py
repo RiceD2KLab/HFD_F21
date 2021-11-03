@@ -71,20 +71,10 @@ Violation_data['Code'].value_counts().plot(kind='barh')
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-Violation_code = Violation_data['Code'].value_counts()
-Violation_code = Violation_code[:6, ]
-plt.figure(figsize=(20, 10))
-# List to store common violation codes
-common_v_codes = []
-for ind in range(len(Violation_code.index)):
-    common_v_codes.append(legend[Violation_code.index[ind]])
-bp = sns.barplot(common_v_codes, Violation_code.values, alpha=0.8)
-plt.xticks(fontsize=18)
-plt.yticks(fontsize=18)
 bp.set_title("6 Most Common Violation Codes", fontsize=20)
 plt.ylabel('Number of Occurrences', fontsize=20)
 plt.xlabel('Violation Code', fontsize=20)
-plt.show()
+plot(plt, 3)
 
 # In[13]:
 
@@ -103,16 +93,10 @@ Violation_data.shape
 
 
 # create a bar graph based on the inspection descriptions of all the violation data
-Violation_descript = Violation_data['DESCRIPT'].value_counts()
-Violation_descript = Violation_descript[:7, ]
-plt.figure(figsize=(35, 10))
-sns.barplot(Violation_descript.index, Violation_descript.values, alpha=0.8)
 plt.title("7 Most Common Inspection Descriptions", fontsize=20)
-plt.xticks(fontsize=18)
-plt.yticks(fontsize=18)
 plt.ylabel('Number of Occurrences', fontsize=20)
 plt.xlabel('Inspection Description', fontsize=20)
-plt.show()
+plot(plt, 4)
 
 # In[16]:
 
@@ -120,151 +104,13 @@ plt.show()
 # confirming there are no NaN values
 Violation_data['DESCRIPT'].isna().sum()
 
-# In[17]:
+# In[17]
 
 
-# Violation_data['FULLNAME'].isna().sum() # -> 2890rows
-
-##Check the counts for the unique values in the column FULLNAME
-Violation_data['FULLNAME'].value_counts(dropna=False)
-
-Violation_data['FULLNAME'].nunique()  # 140 unique FULLNAME 's are present
-
-# Replace the NaN with noData
-Violation_data['FULLNAME'] = Violation_data['FULLNAME'].fillna('NoData')
-
-# In[18]:
-
-
-# Check the number of NaN 's in GPSX
-Violation_data['GPSX'].isna().sum()  # 122 -> Instances
-
-# Replace the Instances with 0.0
-Violation_data['GPSX'] = Violation_data['GPSX'].fillna(0.0)
-
-# Change the type from float to int
-Violation_data['GPSX'] = Violation_data['GPSX'].astype(int)
-
-# Check the datatype
-Violation_data['GPSX'].dtype
-
-# In[25]:
-
-
-# Check the number of NaN 's in GPSX
-Violation_data['GPSY'].isna().sum()
-
-# Replace the Instances with 0.0
-Violation_data['GPSY'] = Violation_data['GPSY'].fillna(0.0)
-
-# Change the type from float to int
-Violation_data['GPSY'] = Violation_data['GPSY'].astype(int)
-
-# Check the datatype
-Violation_data['GPSY'].dtype
-
-# In[27]:
-
-
-# Drop the rows where violation data is 0,1  in both GPSX and GPSY
-
-
-Violation_data_drop_GPS = Violation_data
-
-# drop rows where GPSX value is 0
-Violation_data_drop_GPS.drop(Violation_data_drop_GPS.loc[Violation_data_drop_GPS['GPSX'] == 0].index, inplace=True)
-# drop rows where GPSX value is 1
-Violation_data_drop_GPS.drop(Violation_data_drop_GPS.loc[Violation_data_drop_GPS['GPSX'] == 1].index, inplace=True)
-# drop rows where GPSY value is 0
-Violation_data_drop_GPS.drop(Violation_data_drop_GPS.loc[Violation_data_drop_GPS['GPSY'] == 0].index, inplace=True)
-# drop rows where GPSY value is 1
-Violation_data_drop_GPS.drop(Violation_data_drop_GPS.loc[Violation_data_drop_GPS['GPSY'] == 1].index, inplace=True)
-
-# In[37]:
-
-
-unique_GPSX_Values = Violation_data_drop_GPS['GPSX'].value_counts()
-
-# Create a dataframe that can be used to plot the variation between x coordinates
-df_unique_GPSX_Values = pd.DataFrame(unique_GPSX_Values)
-df_unique_GPSX_Values_reset = df_unique_GPSX_Values.reset_index()
-df_unique_GPSX_Values_reset.columns = ['unique_GPSX_Values', 'count']
-df_unique_GPSX_Values_reset
-
-# plot a bar graph
-plt.bar(df_unique_GPSX_Values_reset['unique_GPSX_Values'], df_unique_GPSX_Values_reset['count'], color='red',
-        width=2000)
-plt.ylim([df_unique_GPSX_Values_reset['count'].min(), df_unique_GPSX_Values_reset['count'].max()])
-plt.xlabel('GPSX value')
-plt.ylabel('counts')
-plt.locator_params(axis='x', nbins=5)
-plt.show()
-
-# In[39]:
-
-
-unique_GPSY_Values = Violation_data_drop_GPS['GPSY'].value_counts()
-
-# Create a dataframe that can be used to plot the variation between y coordinates
-df_unique_GPSY_Values = pd.DataFrame(unique_GPSY_Values)
-df_unique_GPSY_Values_reset = df_unique_GPSY_Values.reset_index()
-df_unique_GPSY_Values_reset.columns = ['unique_GPSY_Values', 'count']
-df_unique_GPSY_Values_reset
-
-# plot a bar graph
-plt.bar(df_unique_GPSY_Values_reset['unique_GPSY_Values'], df_unique_GPSY_Values_reset['count'], color='red',
-        width=2000)
-plt.ylim([df_unique_GPSY_Values_reset['count'].min(), df_unique_GPSY_Values_reset['count'].max()])
-plt.xlabel('GPSY value')
-plt.ylabel('counts')
-plt.locator_params(axis='x', nbins=5)
-plt.show()
-
-# In[40]:
-
-
-# Cleaning GPSZ
-
-Violation_data_drop_GPS['GPSZ'].isna().sum()
-
-Violation_data_drop_GPS['GPSZ'].value_counts()
-
-# as the places where GPSZ is 1 GPSX and GPSY correspondingly are 1 aswell hence we can drop this column
-Violation_data_drop_GPS.drop('GPSZ', axis=1, inplace=True)
-
-# In[41]:
-
-
-# Handing back the GPS changes back to Violation Data
-Violation_data = Violation_data_drop_GPS
-
-# In[42]:
-
-
-# Clean INSPTYPECAT data
-Violation_data['INSPTYPECAT'].value_counts(dropna=False)
-
-# Fill the empty INSPTYPECAT with NoData
-Violation_data['INSPTYPECAT'] = Violation_data['INSPTYPECAT'].fillna('NoData')
-
-Violation_data['INSPTYPECAT'].isna().sum()
-
-# In[43]:
-
-
-Violation_data['INSPTYPECAT'].value_counts(dropna=False)
-
-# Create a bar graph for the Inspection type categories in the data
-Violation_INSPTYPECAT = Violation_data['INSPTYPECAT'].value_counts()
-Violation_INSPTYPECAT = Violation_INSPTYPECAT[:7, ]
-plt.figure(figsize=(25, 12))
-sns.barplot(Violation_INSPTYPECAT.index, Violation_INSPTYPECAT.values, alpha=0.8)
 plt.title("7 Most Common Violation Inspection Types", fontsize=20)
-plt.xticks(fontsize=18)
-plt.yticks(fontsize=18)
 plt.ylabel('Number of Occurrences', fontsize=20)
 plt.xlabel("Violation Inspection Types", fontsize=20)
-plt.show()
+plot(plt, 3)
 
 # In[44]:
 
@@ -274,19 +120,11 @@ Violation_data['INSPTYPE'].value_counts(dropna=False)
 # Violation_data['INSPTYPE'].value_counts(dropna = False).sum()
 
 # As there are no empty values no changes need to be made for INSPTYPE
-Violation_INSPTYPE = Violation_data['INSPTYPE'].value_counts()
-Violation_INSPTYPE = Violation_INSPTYPE[:10, ]
-plt.figure(figsize=(20, 10))
-common_insp_types = []
-for insp_type in Violation_INSPTYPE.index:
-    common_insp_types.append(legend.get(insp_type, insp_type))
-sns.barplot(common_insp_types, Violation_INSPTYPE.values, alpha=0.8)
 plt.title("Violation Inspection Types", fontsize=20)
 plt.ylabel('Number of Occurrences', fontsize=20)
-plt.xticks(fontsize=18)
-plt.yticks(fontsize=18)
 plt.xlabel("Violation inspection Types", fontsize=20)
 plt.show()
+plot(plt, 2)
 
 # In[45]:
 
@@ -439,14 +277,10 @@ Violation_data['TEAMCODE'].value_counts(dropna=False)
 
 
 # Bar chart for the number of cases performed by each type of team
-Violation_TEAMCODE = Violation_data['TEAMCODE'].value_counts()
-Violation_TEAMCODE = Violation_TEAMCODE[:11, ]
-plt.figure(figsize=(17, 5))
-sns.barplot(Violation_TEAMCODE.index, Violation_TEAMCODE.values, alpha=0.8)
 plt.title("Distribution of case's for each Team")
 plt.ylabel('Number of Cases', fontsize=12)
 plt.xlabel("Name of each Team")
-plt.show()
+plot(plt, 3)
 
 # In[67]:
 
@@ -458,14 +292,10 @@ Violation_data['TEAMDESCRIPTION'].value_counts(dropna=False)
 # In[68]:
 
 
-Violation_TEAMDESCRIPTION = Violation_data['TEAMDESCRIPTION'].value_counts()
-Violation_TEAMDESCRIPTION = Violation_TEAMDESCRIPTION[:11, ]
-plt.figure(figsize=(17, 5))
-sns.barplot(Violation_TEAMDESCRIPTION.index, Violation_TEAMDESCRIPTION.values, alpha=0.8)
 plt.title("Distribution of case's for each Team")
 plt.ylabel('Number of Occurrences', fontsize=12)
 plt.xlabel("Cases for each Team Code")
-plt.show()
+plot(plt, 3)
 
 # In[69]:
 
@@ -552,16 +382,14 @@ team_distribution = team['TEAMDESCRIPTION'].value_counts().plot(kind='pie')
 team_distribution = team['TEAMDESCRIPTION'].value_counts().plot(kind='bar')
 plt.xlabel('Team names')
 plt.xlabel('Number of members in the team')
-plt.show()
+plot(plt, 3)
 
 # In[100]:
 
 
 # Clean the Violation Status column
 Violation_data['ViolationStatus'].value_counts(dropna=False)
-
 Violation_data['ViolationStatus'] = Violation_data['ViolationStatus'].fillna('NoData')
-
 Violation_data['ViolationStatus'].value_counts()
 
 # In[118]:
