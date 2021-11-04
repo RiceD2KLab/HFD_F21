@@ -80,16 +80,34 @@
 
         <div class="dropdown-content" id="myDropdown">
 
-            <a href="D:\HFD\HFD_data\Interactive maps for Violation in ZIPCODE's\OutputHTMLForEachTeam\AllTeams.html" target="iframe_a">AllTeams</a>
-            <a href="D:\HFD\HFD_data\Interactive maps for Violation in ZIPCODE's\OutputHTMLForEachTeam\HazMatHiPi.html" target="iframe_a">HazMatHiPi</a>
-            <a href="D:\HFD\HFD_data\Interactive maps for Violation in ZIPCODE's\OutputHTMLForEachTeam\GO.html" target="iframe_a">GO</a>
-            <a href="D:\HFD\HFD_data\Interactive maps for Violation in ZIPCODE's\OutputHTMLForEachTeam\HighRise.html" target="iframe_a">HighRise</a>
-            <a href="D:\HFD\HFD_data\Interactive maps for Violation in ZIPCODE's\OutputHTMLForEachTeam\PlanCk.html"target="iframe_a">PlanCk</a>
-            <a href="D:\HFD\HFD_data\Interactive maps for Violation in ZIPCODE's\OutputHTMLForEachTeam\SpecialOps.html"target="iframe_a">SpecialOps</a>
-            <a href="D:\HFD\HFD_data\Interactive maps for Violation in ZIPCODE's\OutputHTMLForEachTeam\Weekends.html"target="iframe_a">Weekends</a>
-            <a href="D:\HFD\HFD_data\Interactive maps for Violation in ZIPCODE's\OutputHTMLForEachTeam\APT-HTL.html"target="iframe_a">APT/HTL</a>
-            <a href="D:\HFD\HFD_data\Interactive maps for Violation in ZIPCODE's\OutputHTMLForEachTeam\SCH-INS.html"target="iframe_a">SCH/INS</a>
+            <a href="AllTeams.html" target="iframe_a">AllTeams</a>
+            <a href="HazMatHiPi.html" target="iframe_a">HazMatHiPi</a>
+            <a href="GO.html" target="iframe_a">GO</a>
+            <a href="HighRise.html" target="iframe_a">HighRise</a>
+            <a href="PlanCk.html"target="iframe_a">PlanCk</a>
+            <a href="SpecialOps.html"target="iframe_a">SpecialOps</a>
+            <a href="Weekends.html"target="iframe_a">Weekends</a>
+            <a href="APT-HTL.html"target="iframe_a">APT/HTL</a>
+            <a href="SCH-INS.html"target="iframe_a">SCH/INS</a>
           </div>
+    <div class="dropdown">
+  <button class="dropbtn" onclick="myFunctionNlp()">nlp
+    <i class="fa fa-caret-down"></i>
+  </button>
+  </div>
+
+        <div class="dropdown-content" id="myDropdownNlp">
+
+            <a href="AllTeams.html" target="iframe_a">nlp</a>
+            <a href="average_Length_Supervisor.html" target="iframe_a">supervisor_Average</a>
+            <a href="HazMatHiPi.html" target="iframe_a">HazMatHiPi</a>
+            <a href="GO.html" target="iframe_a">GO</a>
+
+          </div>
+
+
+
+
     <div id="container" style="border: solid 2px #000;">
         <iframe height="650px" 
             width="90%" name="iframe_a">
@@ -99,16 +117,23 @@
             of the div here -->
     </div>
 
+
+
 </div>
   </div> 
 
 
 
 <script>
-/* When the user clicks on the button, 
-toggle between hiding and showing the dropdown content */
+
+//function to call zipcode categorized cases handled by teams in the interactive dropdown list
 function myFunction() {
   document.getElementById("myDropdown").classList.toggle("show");
+}
+
+//function to call nlp interactive dropdown list
+function myFunctionNlp() {
+  document.getElementById("myDropdownNlp").classList.toggle("show");
 }
 
 // Close the dropdown if the user clicks outside of it
