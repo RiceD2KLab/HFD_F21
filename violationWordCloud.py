@@ -58,17 +58,43 @@ from wordcloud import WordCloud
 #by tab
 # TODO: change csv file name to generate word cloud for violations for each 'TEAMCODE' or building type
 # format of csv file is: 'violation_[TEAMCODE]'
-# e.g. violation_HighRise.csv, violation_APT_HTL.csv, violation_blankTeamCode.csv
-# e.g. violation_JDennis.csv
 
+# Building Codes:
+# violation_HighRise.csv 
+# violation_APT_HTL.csv
+# violation_blankTeamCode.csv
+# violation_GO.csv
+# violation_HazMatHiPile.csv 
+# violation_PlanCk.csv
+# violation_SCH_INS.csv
+# violation_SpecialOps.csv
+# violation_Weekends.csv
+
+# Inspectors:
+# violation_JDennis.csv
 your_list = [] 
-with open('violation_JDennis.csv', 'r') as f:
+with open('violation_HighRise.csv', 'r') as f:
     reader = csv.reader(f)
     your_list = '\t'.join([i[1] for i in reader])
 
 
+# Make all strings lowercase and remove insignificant strings
+
+def remove_substring(s, substr):
+    # type: (str, str) -> str
+    return re.subn(substr, '', s)[0]
+
+
+new_list = your_list.lower()
+
+new_list = remove_substring(new_list, 'nodata')
+new_list = remove_substring(new_list, 'must')
+new_list = remove_substring(new_list, 'need')
+
+
 # Generate a word cloud image
-wordcloud = WordCloud().generate(your_list.lower)
+print("NEW LIST: \n", new_list)
+wordcloud = WordCloud().generate(new_list)
 
 # Display the generated image:
 # the matplotlib way:
@@ -77,7 +103,7 @@ import matplotlib.pyplot as plt
 plt.imshow(wordcloud, interpolation='bilinear')
 plt.axis("off")
 
-wordcloud = WordCloud(width=2400, height=1200).generate(your_list)
+wordcloud = WordCloud(width=2400, height=1200).generate(new_list)
 plt.figure()
 plt.imshow(wordcloud, interpolation="bilinear")
 plt.axis("off")
