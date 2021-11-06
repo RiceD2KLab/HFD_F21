@@ -73,7 +73,7 @@ from wordcloud import WordCloud
 # Inspectors:
 # violation_JDennis.csv
 your_list = [] 
-with open('data/violation_comments_by_teamcode/violation_Weekends.csv', 'r') as f:
+with open('data/violation_comments_by_inspector_csv/violation_JDennis.csv', 'r') as f:
     reader = csv.reader(f)
     your_list = '\t'.join([i[1] for i in reader])
 
