@@ -43,4 +43,4 @@ pip install plotly
   ```
   with open('data/violation_comments_by_teamcode/violation_Weekends.csv', 'r') as f:
   ```
-2. run `python3 violationWordCloud.py`
+2. Run `python3 violationWordCloud.py`
