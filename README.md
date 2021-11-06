@@ -37,3 +37,10 @@ pip install plotly
 3. Run the testGeoPy file to get the HTML outputs 
 
 4. Run the Integrate.html file to see the website where the interactive maps of each team can be selected 
+
+### For violation comment word clouds
+1. Edit line 76 of violationWordCloud.py to the building type or inspector of which violation comments you want to look at
+  ```
+  with open('data/violation_comments_by_teamcode/violation_Weekends.csv', 'r') as f:
+  ```
+2. run `python3 violationWordCloud.py`
