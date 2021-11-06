@@ -73,7 +73,7 @@ from wordcloud import WordCloud
 # Inspectors:
 # violation_JDennis.csv
 your_list = [] 
-with open('violation_HighRise.csv', 'r') as f:
+with open('data/violation_comments_by_teamcode/violation_Weekends.csv', 'r') as f:
     reader = csv.reader(f)
     your_list = '\t'.join([i[1] for i in reader])
 
@@ -90,18 +90,28 @@ new_list = your_list.lower()
 new_list = remove_substring(new_list, 'nodata')
 new_list = remove_substring(new_list, 'must')
 new_list = remove_substring(new_list, 'need')
+new_list = remove_substring(new_list, 'required')
+new_list = remove_substring(new_list, 'please')
+new_list = remove_substring(new_list, 'provide')
+new_list = remove_substring(new_list, 'will')
+new_list = remove_substring(new_list, 'make')
+new_list = remove_substring(new_list, 'sure')
+new_list = remove_substring(new_list, 'apply')
+
+
+
 
 
 # Generate a word cloud image
-print("NEW LIST: \n", new_list)
+# print("NEW LIST: \n", new_list)
 wordcloud = WordCloud().generate(new_list)
 
 # Display the generated image:
 # the matplotlib way:
 import matplotlib.pyplot as plt
 
-plt.imshow(wordcloud, interpolation='bilinear')
-plt.axis("off")
+# plt.imshow(wordcloud, interpolation='bilinear')
+# plt.axis("off")
 
 wordcloud = WordCloud(width=2400, height=1200).generate(new_list)
 plt.figure()
