@@ -65,7 +65,7 @@ def incid_cat(incidcode):
     return "None"
 
 pd.options.display.max_columns = 15
-df = pd.read_csv('../IncidentData.csv')
+df = pd.read_csv('../data/IncidentData.csv')
 
 df = df[pd.isnull(df['PropCode']) == False]
 df = df[pd.isnull(df['IncidentCode']) == False]
