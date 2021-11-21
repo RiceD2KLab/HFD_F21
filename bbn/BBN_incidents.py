@@ -75,6 +75,7 @@ df['PropCode'] = df['PropCode'].apply(lambda x: prop_cat(x))
 df['IncidentCode'] = df['IncidentCode'].apply(lambda x: incid_cat(x))
 
 
+
 # # Create nodes by manually typing in probabilities
 PropCode = BbnNode(Variable(0, 'Prop', ['Assembly', 'Educational', 'HCDC', 'Residential', 'Mercantile', 'Industrial', 'Manufacturing', 'Storage', 'Special', 'Other', 'None']),
                    [0.1, 0.2, .05, .1, .2, .05, .025, .025, .05, .15, .05])
