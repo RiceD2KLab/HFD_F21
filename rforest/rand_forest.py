@@ -119,6 +119,7 @@ df = df.drop(columns=['Basic Incident Number (FD1)', 'Basic Incident Full Street
 df = df[pd.isnull(df['PropCode']) == False]
 df = df[pd.isnull(df['IncidentCode']) == False]
 df = df[pd.isnull(df['Basic Incident Full Address']) == False]
+df = df[pd.isnull(df['Basic EFD Card Number (FD1.84)']) == False]
 
 
 # Create bands for variables that we want to use in the model
