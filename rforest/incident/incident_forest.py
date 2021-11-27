@@ -12,22 +12,25 @@ import matplotlib.pyplot as plt # for drawing graphs
 inc_predict = []
 
 # global map and counter for the EFD card number IDs
-card_map = collections.defaultdict(int)
+card_map = collections.defaultdict(list)
 card_id = 1
 
 # build card map dictionary
-efd = pd.read_excel('../data/CardNumber.xlsx')
+efd = pd.read_excel('../../data/CardNumber.xlsx')
 
 for ind, row in efd.iterrows():
     # global card_map
     # global card_id
     card = row["TYPE"]
-    if card_map[card] == 0:
-        if len(card) < 5:
-            card_map[card] = card_id
-        else:
-            card_map[card[0:5]] = card_id
-        card_id += 1
+    if len(card) < 5:
+        if card_map[card] == []:
+            card_map[card].append(card_id)
+            card_map[card].append(row["DESCR"])
+    else:
+        if card_map[card[0:5]] == []:
+            card_map[card[0:5]].append(card_id)
+            card_map[card[0:5]].append(row["DESCR"])
+    card_id += 1
 
 # Helper functions to convert/process column data to int
 # data types and categories
@@ -120,11 +123,16 @@ def incid_cat(incidcode):
 def proc_cardnum(card):
     global card_map
     if len(card) < 5:
-        return int(card_map[card])
-    return int(card_map[card[0:5]])
+        # print(card_map[card][0])
+        if card in card_map:
+            return int(card_map[card][0])
+        return 0
+    if card in card_map:
+        return int(card_map[card][0])
+    return 0
 
 pd.options.display.max_columns = 15
-df = pd.read_csv('../data/IncidentData.csv')
+df = pd.read_csv('../../data/IncidentData.csv')
 
 # Dropping non-essential columns and removing rows with no data
 df = df.drop(columns=['Basic Incident Number (FD1)', 'Basic Incident Full Street Address',
@@ -149,7 +157,7 @@ df.insert(0, 'Zip', zip_col)
 df.insert(0, 'CardNum', card_col)
 
 # Print check
-print(df.head(20))
+# print(df.head(20))
 
 # Set all columns but the incident code in dataframe as inputs,
 # set incident code as output
@@ -162,17 +170,20 @@ rfc = RandomForestClassifier()
 rfc.fit(x_train, y_train)
 
 ## Test Case Example
-ZIP = 77015
+ZIP = 77494
 PropCode = 000
 
 # Build list of likely incidents (card nums)
 for key in card_map.keys():
-   p_val = rfc.predict_proba([[card_map[key], ZIP, PropCode]])[:,1]
+   p_val = rfc.predict_proba([[card_map[key][0], ZIP, PropCode]])[:,1]
    inc_predict.append((p_val, key))
 
 # Sort by greatest to least and print top 5
 inc_predict.sort(reverse = True, key = lambda x: x[0])
-print(inc_predict[0:5])
+# print(inc_predict[0:5])
+
+for card in inc_predict[0:5]:
+    print(card[0][0], card_map[card[1]][1])
 
 # Run tests on generated random forest model
 # rfc_predict = rfc.predict(x_test)
