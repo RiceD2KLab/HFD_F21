@@ -127,12 +127,12 @@ def proc_cardnum(card):
         if card in card_map:
             return int(card_map[card][0])
         return 0
-    if card in card_map:
-        return int(card_map[card][0])
+    if card[0:5] in card_map:
+        return int(card_map[card[0:5]][0])
     return 0
 
 pd.options.display.max_columns = 15
-df = pd.read_csv('../../data/IncidentData.csv')
+df = pd.read_csv('../../data/IncidentData.csv', low_memory=False)
 
 # Dropping non-essential columns and removing rows with no data
 df = df.drop(columns=['Basic Incident Number (FD1)', 'Basic Incident Full Street Address',
@@ -165,25 +165,10 @@ x = df.drop('IncidentCode', axis=1)
 y = df['IncidentCode']
 
 # Split data into training and testing data, and train forest on training data
+# Accuracy will improve if whole dataset used for training
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=.33, random_state=66)
 rfc = RandomForestClassifier()
-rfc.fit(x_train, y_train)
-
-## Test Case Example
-ZIP = 77494
-PropCode = 000
-
-# Build list of likely incidents (card nums)
-for key in card_map.keys():
-   p_val = rfc.predict_proba([[card_map[key][0], ZIP, PropCode]])[:,1]
-   inc_predict.append((p_val, key))
-
-# Sort by greatest to least and print top 5
-inc_predict.sort(reverse = True, key = lambda x: x[0])
-# print(inc_predict[0:5])
-
-for card in inc_predict[0:5]:
-    print(card[0][0], card_map[card[1]][1])
+rfc.fit(x_train.values, y_train.values)
 
 # Run tests on generated random forest model
 # rfc_predict = rfc.predict(x_test)
@@ -201,3 +186,22 @@ for card in inc_predict[0:5]:
 # print("=== Mean AUC Score ===")
 # print("Mean AUC Score - Random Forest: ", rfc_cv_score.mean())
 #
+
+def predictTop5(zip, propcode):
+    # Build list of likely incidents (card nums)
+    print("Zipcode: " + str(zip), "Propcode: " + str(propcode))
+    print("")
+    for key in card_map.keys():
+       p_val = rfc.predict_proba([[card_map[key][0], zip, propcode]])[:,1]
+       inc_predict.append((p_val, key))
+
+    # Sort by greatest to least and print top 5
+    inc_predict.sort(reverse = True, key = lambda x: x[0])
+    # print(inc_predict[0:5])
+
+    print("probability", "incident desc.")
+    for card in inc_predict[0:5]:
+        print(card[0][0], card_map[card[1]][1])
+
+## Test Case Example
+predictTop5(77494, 000)
