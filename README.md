@@ -3,8 +3,6 @@
 
 This is our repository that contains the code for our capstone project: <br /> **Analyzing Fire Inspections for the Houston Fire Department**
 
-STATUS: We are currently in the process of data cleaning and exploratory data analysis. 
-
 DISCLAIMER: The Houston Fire Department data is private and cannot be posted to a public repository. In order to run our files and generate diagrams based on the dataset we were given, please locate and download the files `Address_&_Violation_Records_data 2020.csv` and `Address_&_Violation_Records_data 2021.csv`.
 
 ## Steps to Run our Python Code
@@ -47,8 +45,8 @@ Go into wordcloud directory:
    - violation_word_clouds_by_teamcode
 
 * To recreate word clouds: 
-1. Run printViolationComment.py 
-2. Run wordFrequencyGenerator.py using the output from (1)
-3. Run wordCloudfromFreqGenerator.py to generate word cloud from the frequency csv file made from (2)
+   1. Run printViolationComment.py 
+   2. Run wordFrequencyGenerator.py using the output from (1)
+   3. Run wordCloudfromFreqGenerator.py to generate word cloud from the frequency csv file made from (2)
 
 
