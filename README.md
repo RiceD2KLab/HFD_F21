@@ -37,3 +37,9 @@ pip install plotly
 3. Run the testGeoPy file to get the HTML outputs 
 
 4. Run the Integrate.html file to see the website where the interactive maps of each team can be selected 
+
+
+### For the word clouds
+1. Run printViolationComment.py 
+2. Run wordFrequencyGenerator.py using the output from (1)
+3. Run wordCloudfromFreqGenerator.py to generate word cloud from the frequency csv file made from (2)
