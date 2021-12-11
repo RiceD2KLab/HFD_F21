@@ -21,7 +21,9 @@ from wordcloud import WordCloud
 # violation_CBoyd.csv
 # violation_LKimball.csv
 # violation_MRogers.csv
-# 
+
+# create a list of all the words in the given csv file
+# NOTE: edit line 28 to use different csv files listed above 
 your_list = [] 
 with open('data/violation_comments_by_inspector_csv/violation_MRogers.csv', 'r') as f:
     reader = csv.reader(f)
@@ -29,11 +31,9 @@ with open('data/violation_comments_by_inspector_csv/violation_MRogers.csv', 'r')
 
 
 # Make all strings lowercase and remove insignificant strings
-
 def remove_substring(s, substr):
     # type: (str, str) -> str
     return re.subn(substr, '', s)[0]
-
 
 new_list = your_list.lower()
 
@@ -51,15 +51,15 @@ new_list = remove_substring(new_list, 'last date')
 new_list = remove_substring(new_list, 'last')
 new_list = remove_substring(new_list, 'date')
 
-
-
-# Generate a word cloud image
+# PRINT OUT LIST OF WORDS TO BE COPIED INTO wordFrequencyGenerator.py
 # new_list = new_list.split(' ')
 # print("NEW LIST: \n", new_list)
 new_list = re.sub(r'==.*?==+', '', new_list)
 new_list = new_list.replace('\n', '')
 print(new_list)
 
+
+# Generate a word cloud image
 # wordcloud = WordCloud(collocations=False).generate(new_list)
 # # print(wordcloud.words_)
 # # Display the generated image:
