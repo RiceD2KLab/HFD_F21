@@ -1,6 +1,10 @@
 import csv
 from wordcloud import WordCloud
 
+# Order of files:
+# 1. Run printViolationComment.py 
+# 2. Run wordFrequencyGenerator.py using the output from (1)
+# 3. Run wordCloudfromFreqGenerator.py to generate word cloud from the frequency csv file made from (2)
 
 # ======================================== WORD CLOUD ============================================
 
