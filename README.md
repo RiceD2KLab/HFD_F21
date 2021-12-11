@@ -40,6 +40,15 @@ pip install plotly
 
 
 ### For the word clouds
+Go into wordcloud directory:
+
+* To see results, go into directories:
+   - violation_word_clouds_by_inspector
+   - violation_word_clouds_by_teamcode
+
+* To recreate word clouds: 
 1. Run printViolationComment.py 
 2. Run wordFrequencyGenerator.py using the output from (1)
 3. Run wordCloudfromFreqGenerator.py to generate word cloud from the frequency csv file made from (2)
+
+
