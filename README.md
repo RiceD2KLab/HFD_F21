@@ -1,3 +1,5 @@
+# NOTE: Please go to the "master" branch. We were unable to change the default branch due to lack of permission on this repo. 
+
 # Houston Fire Department - Fall 2021
 #### Members: Hannah Lei, Mingzhao Liu, Yikun Li, Sacheth Reddy Mamidi, Parth Parulekar
 
