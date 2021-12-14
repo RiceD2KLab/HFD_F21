@@ -134,6 +134,7 @@ def proc_cardnum(card):
 pd.options.display.max_columns = 15
 df = pd.read_csv('../../data/IncidentData.csv', low_memory=False)
 
+# Cleaning incident data
 # Dropping non-essential columns and removing rows with no data
 df = df.drop(columns=['Basic Incident Number (FD1)', 'Basic Incident Full Street Address',
                  'Basic Apparatus Call Sign List',
@@ -156,9 +157,6 @@ df = df.drop(columns=['Basic EFD Card Number (FD1.84)'])
 df.insert(0, 'Zip', zip_col)
 df.insert(0, 'CardNum', card_col)
 
-# Print check
-# print(df.head(20))
-
 # Set all columns but the incident code in dataframe as inputs,
 # set incident code as output
 x = df.drop('IncidentCode', axis=1)
@@ -169,23 +167,6 @@ y = df['IncidentCode']
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=.33, random_state=66)
 rfc = RandomForestClassifier()
 rfc.fit(x_train.values, y_train.values)
-
-# Run tests on generated random forest model
-# rfc_predict = rfc.predict(x_test)
-# rfc_cv_score = cross_val_score(rfc, x, y, cv=10, scoring='roc_auc')
-#
-# print("=== Confusion Matrix ===")
-# print(confusion_matrix(y_test, rfc_predict))
-# print('\n')
-# print("=== Classification Report ===")
-# print(classification_report(y_test, rfc_predict))
-# print('\n')
-# print("=== All AUC Scores ===")
-# print(rfc_cv_score)
-# print('\n')
-# print("=== Mean AUC Score ===")
-# print("Mean AUC Score - Random Forest: ", rfc_cv_score.mean())
-#
 
 def predictTop5(zip, propcode):
     # Build list of likely incidents (card nums)
