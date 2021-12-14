@@ -38,6 +38,14 @@ pip install plotly
 
 4. Run the Integrate.html file to see the website where the interactive maps of each team can be selected 
 
+### For the random forest incident prediction
+
+1. At the project root, navigate to the 'rforest' directory
+2. Navigate to the 'incident' directory
+3. Choose desired prediction input parameters of zipcode and property type on line 188 in incident_forest.py
+5. Run incident_forest.py through IDE or Terminal
+   - Command: python3 incident_forest.py
+
 
 ### For the word clouds
 Go into wordcloud directory:
