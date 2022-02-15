@@ -1,59 +1,91 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-
-
-import numpy as np
 import pandas as pd
-import re
+import argparse
+import os
 
-#import both the 2020 and 2021 datasets into dataframes
-data2020 = pd.read_csv(r"Address_&_Violation_Records_data 2020.csv")
-data2021 = pd.read_csv(r"Address_&_Violation_Records_data 2021.csv")
-
-#drop the column STARTDTTM in 2021 as it is unavailable in 2020 dataset; 2020 - 65k records 2021 -16k records
-data2021.drop('STARTDTTM', axis=1, inplace=True)
-
-#combine both the years data 
-Violation_data = data2020.append(data2021, ignore_index = True)
-
-Violation_data.head()
+from cleaning.data_cleaning import compile_datasets, clean_html, FileType, \
+  output_to_csv, output_to_excel
 
 
+def clean_violations(filenames: str, outfile_base: str,
+                     out_type: FileType = FileType.CSV):
+  """
+  Given a list of filenames for address and violations records data,
+  cleans the data, outputting two versions of the cleaned comments data.
+  
+  The first output file, <outfile_base>.<filetype> contains all the address
+  and violation records data with the cleaned comment data.
+  
+  The second output file, <outfile_base>_comments.<filetype> contains only
+  non-empty cleaned comment data.
+  :param outfile_base: base output filename. The method will create files
+    `<outfile_base>.<filetype>`
+  :param out_type: Output filetype. Either EXCEL or CSV
+  :param filenames: List of filenames for data to clean
+  :return: None
+  """
+  
+  # Create comments output filename
+  base, ext = os.path.splitext(outfile_base)
+  comments_outfile = base + "_comments"
+  
+  datasets = [pd.read_csv(filename) for filename in filenames]
+  drop_set = ['STARTDTTM']
+  
+  fill_value = "NoData"
+  compiled_data = compile_datasets(datasets, drop_set)
+  compiled_data["ViolationComment"] = compiled_data["ViolationComment"].fillna(
+    fill_value)
+  
+  # Clean the HTML in the comments data
+  compiled_data["ViolationComment"] = compiled_data.apply(
+    lambda x: clean_html(x["ViolationComment"]), axis=1
+  )
+  
+  # Extract non-empty Comments
+  compiled_comments = \
+    compiled_data[compiled_data.ViolationComment != fill_value][
+      "ViolationComment"]
+  
+  # Output file
+  if out_type == FileType.EXCEL:
+    # Output to excel
+    output_to_excel(compiled_data, outfile_base)
+    output_to_excel(compiled_comments, comments_outfile)
+    pass
+  
+  else:
+    # Output to csv
+    output_to_csv(compiled_data, outfile_base)
+    output_to_csv(compiled_comments, comments_outfile)
 
 
-
-def cleanhtml(raw_html):
-  cleanr = re.compile('<.*?>')
-  cleantext = re.sub(cleanr, '', raw_html)
-  cleantext = cleantext.replace('&nbsp;','')
-  cleantext = cleantext.replace('***','')
-  cleantext = cleantext.replace('**','')
-  cleantext = cleantext.replace('*','')
-  cleantext = cleantext.replace('\r','')
-  return cleantext
-
-
-# In[22]:
-
-
-#fill the empty data rows with NoData
-
-Violation_data.ViolationComment = Violation_data.ViolationComment.fillna("NoData")
-
-#apply the above created function to the data inorder to clean the HTML that has permeated through the comments
-
-def apply_complex_function(x): return cleanhtml(x['ViolationComment'])
-
-Violation_data['ViolationComment'] = Violation_data.apply(apply_complex_function, axis=1)
-
-#get the result out in excel 
-
-Violation_data.to_excel('ViolationComment2020and2021new.xlsx', encoding='utf-8-sig')
-
-Violation_data['ViolationComment'].to_excel('ViolationComment2020and2021_onlyComments.xlsx', encoding='utf-8-sig')
-
-
-
-
-
+if __name__ == "__main__":
+  parser = argparse.ArgumentParser(description="Clean HFD violation comments.")
+  parser.add_argument("filenames",
+                      help="Paths to all of the files to be cleaned.",
+                      nargs='*', type=str,
+                      default=[os.path.normpath(
+                        "data/Address_&_Violation_Records_data 2020.csv"),
+                        os.path.normpath(
+                          r"data/Address_&_Violation_Records_data 2021.csv")])
+  parser.add_argument("--out", nargs='?',
+                      help="Name of output file. This file should be an excel "
+                           "file.",
+                      default="ViolationComment2020and2021.xlsx")
+  excel_or_csv = parser.add_mutually_exclusive_group()
+  
+  # Decided to use "csv" as the default output filetype because exporting to
+  # CSV is much quicker than creating an Excel spreadsheet. If using an Excel
+  # spreadsheet is necessary, add "--outfile=excel" to the program invocation.
+  excel_or_csv.add_argument("--outfile", choices=["excel", "csv"],
+                            default="csv",
+                            help="Choose the filetype for the cleaned data output file."
+                                 "Choose either 'csv' or 'excel'")
+  
+  args = parser.parse_args()
+  if args.outfile == "csv":
+    clean_violations(args.filenames, args.out, out_type=FileType.CSV)
+  else:
+    clean_violations(args.filenames, args.out, out_type=FileType.EXCEL)
