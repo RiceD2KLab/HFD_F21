@@ -2,6 +2,7 @@ import os.path
 import re
 from enum import Enum
 import pandas as pd
+import glob
 
 
 class FileType(Enum):
@@ -82,3 +83,15 @@ def output_to_csv(dataframe: pd.DataFrame, filename: str) -> None:
     filename = base + ".csv"
   
   dataframe.to_csv(filename, encoding="utf-8")
+
+def stack_datasets(folder_directory,extension):
+    """
+    Takes a folder directory and extension for desired file type as input and 
+    outputs a concatenated file of all of the files in the given folder. 
+    """
+    all_data = []
+    for file in glob.iglob(f'{directory}/*.{extension}'):
+        all_data.append(pd.read_csv(file))
+
+    df = pd.concat(all_data, ignore_index=True)
+    df.to_csv(f'{directory}/ConcatenatedData.{extension}', index = False)
