@@ -18,8 +18,8 @@ placekeys = []
 
 for idx, row in add_vio_data.iterrows():
     place = {"street_address": row['STADDRESS'], "city": row['CITY'], "region": row["STATE"], 
-    "postal_code": row["ZIP"], "iso_country_code": "US"}
-    pk_dict = pk_api.lookup_placekey(place)
+    "postal_code": str(row["ZIP"]), "iso_country_code": "US"}
+    pk_dict = pk_api.lookup_placekey(**place, strict_address_match=False)
     placekey = pk_dict['placekey']
     placekeys.append(placekey)
 
