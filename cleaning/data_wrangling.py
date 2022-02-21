@@ -25,13 +25,13 @@ def clean_text_data(raw_data: str, regex_replacements: Dict[str, str] = None,
   :param verbatim_replacements: Dictionary of verbatim replacements to make
   :return: Cleaned data
   """
-
+  
   if regex_replacements is None:
     regex_replacements = {}
-
+  
   if verbatim_replacements is None:
     verbatim_replacements = {}
-
+  
   regexes = {re.compile(k): v for k, v in regex_replacements.items()}
   
   clean_text = raw_data
@@ -75,13 +75,69 @@ def compile_datasets(datasets: List[pd.DataFrame],
   """
   if filter_cols is None:
     filter_cols = []
-
+  
   for violation in datasets:
     for drop_col in filter_cols:
       if drop_col in violation:
         violation.drop(drop_col, axis=1, inplace=True)
   
   return pd.concat(datasets)
+
+
+def stack_datasets(stack_dir: str, extension: str = "*"):
+  """
+  Takes a folder directory and extension for desired file type as input and
+  outputs a DataFrame with the stacked datasets.
+  
+  :param stack_dir: Directory with files to stack
+  :param extension: file extension of files to be stacked
+  :return: A DataFrame with the stacked datasets
+  """
+  all_data = [pd.read_csv(filename) for filename in
+              glob.iglob(f"{stack_dir}/*.{extension}")]
+  
+  return compile_datasets(all_data)
+
+
+def filter_rows(dataset: pd.DataFrame,
+                unwanted_values: Dict) -> pd.DataFrame:
+  """
+  Given a dataset, drop rows that have unwanted values in specified comments.
+  :param dataset: DataFrame from which to filter matching rows
+  :param unwanted_values: Columns and corresponding sets of values to ignore
+  :return: A DataFrame with the unwanted rows filtered out.
+  """
+  to_drop = []
+  for idx, row in dataset.iterrows():
+    for column, unwanted in unwanted_values.items():
+      if row[column] in unwanted:
+        to_drop.append(idx)
+        continue
+  
+  return dataset.drop(to_drop)
+
+
+def filter_null(dataset, col_names):
+  """
+  Given a dataset, drop rows which have NaN or empty entries in any of the
+  specified columns.
+
+  dataset: string, path or name of csv dataset
+  col_names: list, columns corresponding to components of an address
+
+  Returns DataFrame with non-excluded rows.
+  """
+  
+  data = pd.read_csv(dataset)
+  null_values = data.isnull()
+  idxs_to_drop = set([])
+  
+  for idx, row in null_values.iterrows():
+    for col in col_names:
+      if row[col]:
+        idxs_to_drop.add(idx)
+  
+  return data.drop(idxs_to_drop)
 
 
 def output_to_excel(dataframe: pd.DataFrame, filename: str) -> None:
@@ -109,15 +165,3 @@ def output_to_csv(dataframe: pd.DataFrame, filename: str) -> None:
     filename = base + ".csv"
   
   dataframe.to_csv(filename, encoding="utf-8")
-
-def stack_datasets(stack_dir, extension):
-    """
-    Takes a folder directory and extension for desired file type as input and 
-    outputs a concatenated file of all of the files in the given folder. 
-    """
-    all_data = []
-    for file in glob.iglob(f'{stack_dir}/*.{extension}'):
-        all_data.append(pd.read_csv(file))
-
-    df = pd.concat(all_data, ignore_index=True)
-    df.to_csv(f'{stack_dir}/ConcatenatedData.{extension}', index = False)
