@@ -65,7 +65,7 @@ if __name__ == "__main__":
                                  "Choose either 'csv' or 'excel'")
   
   args = parser.parse_args()
-  data, comments = clean_violations(args.filenames, args.out)
+  data, comments = clean_violations(args.filenames)
   
   # Output resultant DataFrame to file
   base, ext = os.path.splitext(args.out)
