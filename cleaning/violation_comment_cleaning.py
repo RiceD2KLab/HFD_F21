@@ -8,8 +8,7 @@ from cleaning.data_wrangling import compile_datasets, clean_html, FileType, \
   output_to_csv, output_to_excel
 
 
-def clean_violations(filenames: str, outfile_base: str,
-                     out_type: FileType = FileType.CSV):
+def clean_violations(filenames: str):
   """
   Given a list of filenames for address and violations records data,
   cleans the data, outputting two versions of the cleaned comments data.
@@ -19,17 +18,9 @@ def clean_violations(filenames: str, outfile_base: str,
   
   The second output file, <outfile_base>_comments.<filetype> contains only
   non-empty cleaned comment data.
-  :param outfile_base: base output filename. The method will create files
-    `<outfile_base>.<filetype>`
-  :param out_type: Output filetype. Either EXCEL or CSV
   :param filenames: List of filenames for data to clean
   :return: None
   """
-  
-  # Create comments output filename
-  base, ext = os.path.splitext(outfile_base)
-  comments_outfile = base + "_comments"
-  
   datasets = [pd.read_csv(filename) for filename in filenames]
   drop_set = ['STARTDTTM']
   
@@ -48,17 +39,7 @@ def clean_violations(filenames: str, outfile_base: str,
     compiled_data[compiled_data.ViolationComment != fill_value][
       "ViolationComment"]
   
-  # Output file
-  if out_type == FileType.EXCEL:
-    # Output to excel
-    output_to_excel(compiled_data, outfile_base)
-    output_to_excel(compiled_comments, comments_outfile)
-    pass
-  
-  else:
-    # Output to csv
-    output_to_csv(compiled_data, outfile_base)
-    output_to_csv(compiled_comments, comments_outfile)
+  return compiled_data, compiled_comments
 
 
 if __name__ == "__main__":
@@ -71,9 +52,8 @@ if __name__ == "__main__":
                         os.path.normpath(
                           r"data/Address_&_Violation_Records_data 2021.csv")])
   parser.add_argument("--out", nargs='?',
-                      help="Name of output file. This file should be an excel "
-                           "file.",
-                      default="ViolationComment2020and2021.xlsx")
+                      help="Name of output file, without extension.",
+                      default="ViolationData2020and2021")
   excel_or_csv = parser.add_mutually_exclusive_group()
   
   # Decided to use "csv" as the default output filetype because exporting to
@@ -85,7 +65,16 @@ if __name__ == "__main__":
                                  "Choose either 'csv' or 'excel'")
   
   args = parser.parse_args()
+  data, comments = clean_violations(args.filenames, args.out)
+  
+  # Output resultant DataFrame to file
+  base, ext = os.path.splitext(args.out)
+  comments_outfile = base + "_comments"
+  
   if args.outfile == "csv":
-    clean_violations(args.filenames, args.out, out_type=FileType.CSV)
+    output_to_csv(data, base)
+    output_to_csv(comments, comments_outfile)
+  
   else:
-    clean_violations(args.filenames, args.out, out_type=FileType.EXCEL)
+    output_to_excel(data, base)
+    output_to_excel(data, comments_outfile)
