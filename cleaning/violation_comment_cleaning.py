@@ -4,7 +4,7 @@ import pandas as pd
 import argparse
 import os
 
-from cleaning.data_cleaning import compile_datasets, clean_html, FileType, \
+from cleaning.data_wrangling import compile_datasets, clean_html, FileType, \
   output_to_csv, output_to_excel
 
 
