@@ -98,8 +98,7 @@ def clean_addresses(dataset, col_names):
     return clean_addresses
 
 #remove rows with empty address component fields from Address and Violation Data
-cleaned_addvio = clean_addresses('data/sp22data/Address and Violation Data 2020_2021.csv', ['STATE', 'STNO', 'CITY', 'STNAME', 'ZIP'])
-cleaned_addvio.count()
-cleaned_addvio.to_csv('Cleaned Address and Violation Data 2020_2021.csv')
+#cleaned_addvio = clean_addresses('data/sp22data/Address and Violation Data 2020_2021.csv', ['STATE', 'STNO', 'CITY', 'STNAME', 'ZIP'])
+#cleaned_addvio.to_csv('Cleaned Address and Violation Data 2020_2021.csv')
 
 
