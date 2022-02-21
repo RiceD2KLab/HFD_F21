@@ -54,11 +54,8 @@ def gen_placekey(valid, col_name):
         #otherwise, the dict would store error: Invalid address.
         key = pk_dict.get('placekey', 0)
         #if there is a valid placekey, we append it
-        if key != 0:
-            placekey_col.append(key)
         #otherwise, we append a 0 as placeholder
-        else:
-            placekey_col.append(0)
+        placekey_col.append(key)
     #adds the new column into the dataframe
     incident['PlaceKey ID'] = placekey_col
     #exports
