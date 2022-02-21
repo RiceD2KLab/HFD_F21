@@ -84,7 +84,7 @@ def compile_datasets(datasets: List[pd.DataFrame],
   return pd.concat(datasets)
 
 
-def stack_datasets(stack_dir: str, extension: str = "*"):
+def stack_datasets(stack_dir: str, extension: str = "*") -> pd.DataFrame:
   """
   Takes a folder directory and extension for desired file type as input and
   outputs a DataFrame with the stacked datasets.
@@ -117,7 +117,7 @@ def filter_rows(dataset: pd.DataFrame,
   return dataset.drop(to_drop)
 
 
-def filter_null(dataset, col_names):
+def filter_null(dataset: pd.DataFrame, col_names: List[str]) -> pd.DataFrame:
   """
   Given a dataset, drop rows which have NaN or empty entries in any of the
   specified columns.
@@ -127,9 +127,7 @@ def filter_null(dataset, col_names):
 
   Returns DataFrame with non-excluded rows.
   """
-  
-  data = pd.read_csv(dataset)
-  null_values = data.isnull()
+  null_values = dataset.isnull()
   idxs_to_drop = set([])
   
   for idx, row in null_values.iterrows():
@@ -137,7 +135,7 @@ def filter_null(dataset, col_names):
       if row[col]:
         idxs_to_drop.add(idx)
   
-  return data.drop(idxs_to_drop)
+  return dataset.drop(idxs_to_drop)
 
 
 def output_to_excel(dataframe: pd.DataFrame, filename: str) -> None:
