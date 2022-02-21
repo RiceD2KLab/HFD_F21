@@ -1,4 +1,3 @@
-import placekey as pk
 from placekey.api import PlacekeyAPI
 import pandas as pd
 
