@@ -1,5 +1,5 @@
 # Houston Fire Department - SPRING 2022
-#### Members: Annita Chang, Joshua Washington, Jarrett Prchal, Tessa Cannon, Yuxin Gong, Ziyana Samanni.
+#### Members: Annita Chang, Joshua Washington, Jarrett Prchal, Tessa Cannon, Yuxin Gong, Ziyana Samanani.
 
 This is our repository that contains the code for our capstone project: <br /> **Analyzing Fire Inspections for the Houston Fire Department**
 
