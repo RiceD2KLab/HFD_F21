@@ -35,7 +35,7 @@ Running this file will result in the creation of the following cleaned files:
 * `Cleaned Addresss and Violation Data 2020_2021.csv`
 
 #### Voilation data comment cleaning
-To preprocess the address and violation comments, run `violation_comment_cleanning.py`. Pass in any number of CSV files with comments data to stack and process comments. By default, the cleaned comments data will be output to two separate files:
+To preprocess the address and violation comments, run `violation_comment_cleaning.py`. Pass in any number of CSV files with comments data to stack and process comments. By default, the cleaned comments data will be output to two separate files:
 * `ViolationDataCleanedComments.csv` contains all of the original data with the cleaned comments
 * `ViolationDataCleanedComments_comments.csv` contains only cleaned comments data, without the other columns
 
