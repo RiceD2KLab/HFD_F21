@@ -1,9 +1,9 @@
-# Houston Fire Department - Fall 2021
-#### Members: Hannah Lei, Mingzhao Liu, Yikun Li, Sacheth Reddy Mamidi, Parth Parulekar
+# Houston Fire Department - SPRING 2022
+#### Members: Annita Chang, Joshua Washington, Jarrett Prchal, Tessa Cannon, Yuxin Gong, Ziyana Samanni.
 
 This is our repository that contains the code for our capstone project: <br /> **Analyzing Fire Inspections for the Houston Fire Department**
 
-DISCLAIMER: The Houston Fire Department data is private and cannot be posted to a public repository. In order to run our files and generate diagrams based on the dataset we were given, please locate and download the files `Address_&_Violation_Records_data 2020.csv` and `Address_&_Violation_Records_data 2021.csv`.
+DISCLAIMER: The Houston Fire Department data is private and cannot be posted to a public repository. In order to run our files and generate diagrams based on the dataset we were given, please locate and download the files `Address_&_Violation_Records_data 2020.csv` and `Address_&_Violation_Records_data 2021.csv` from Microsoft Team HFD.
 
 ## Steps to Run our Python Code
 
@@ -11,57 +11,23 @@ DISCLAIMER: The Houston Fire Department data is private and cannot be posted to 
 2. Install dependencies with the following commands:
 
 ```
-pip install seaborn
 pip install pandas
+pip install argparse
+pip install os
+pip install typing
+pip install placekey.api
+pip install re
+pip install enum
+pip install glob
 pip install numpy
-pip install matplotlib
-pip install geopandas
-pip install plotly 
 ```
 
-3. Open terminal and run `python HFD_Data_Cleaning_till_VIOLATIONDESCRIPT.py`
-4. Diagrams and graphs should pop up in a Matplotlib window. These windows 
-   can be closed and Python should generate the next graph, which will open
-   in a new window promptly.
-5. Alternatively, you may open HFD_Data_Cleaning_till_VIOLATIONDESCRIPT.py in an IDE 
-   such as Visual Studio Code and run each of the code blocks to generate visuals based on    the dataset in a readable format.
+### For the data preprocessing
+1. Stack and clean the address and violation record data (2020 and 2021), you may  open `clean_addressviolation_incident.py` in an IDE such as Visual Studio Code and run the code.
 
+2. Preprocess the address and violation comment by running `address_processing.py` and `violation_comment_cleanning.py`.
 
-### For the interactive maps
-1. Run the create shape file to get a silhouette of Houston in .shp
-
-2. Run the create cav to get the required data to create the interactive map
-
-3. Run the testGeoPy file to get the HTML outputs 
-
-4. Run the Integrate.html file to see the website where the interactive maps of each team can be selected 
-
-### For the random forest incident prediction
-
-1. At the project root, navigate to the 'rforest' directory
-2. Navigate to the 'incident' directory
-3. Choose desired prediction input parameters of zipcode and property type on line 188 in incident_forest.py
-5. Run incident_forest.py through IDE or Terminal
-   - Command: python3 incident_forest.py
-
-
-### For the word clouds
-Go into wordcloud directory:
-
-* To see results, go into directories:
-   - violation_word_clouds_by_inspector
-   - violation_word_clouds_by_teamcode
-
-* To recreate word clouds: 
-   1. Run printViolationComment.py 
-   2. Run wordFrequencyGenerator.py using the output from (1)
-   3. Run wordCloudfromFreqGenerator.py to generate word cloud from the frequency csv file made from (2)
+3. Add placekey tagging rows to incident/address_violation/INFOR data that have addresses with place key by running `placekey_tagging.py` and add "main" section to placekey tagging `hfd_data_placekey_tagging.py`.
 
 
 
-### For violation comment word clouds
-1. Edit line 76 of violationWordCloud.py to the building type or inspector of which violation comments you want to look at
-  ```
-  with open('data/violation_comments_by_teamcode/violation_Weekends.csv', 'r') as f:
-  ```
-2. Run `python3 violationWordCloud.py`
