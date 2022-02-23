@@ -5,7 +5,7 @@ This is our repository that contains the code for our capstone project: <br /> *
 
 DISCLAIMER: The Houston Fire Department data is private and cannot be posted to a public repository. In order to run our files and generate diagrams based on the dataset we were given, please locate and download the files `Address_&_Violation_Records_data 2020.csv`, `Address_&_Violation_Records_data 2021.csv`, `FF--D2K-2021-data_full year 2021.csv`, and `D2K Incident Data July 2018 to JAug 10 2021_Export.csv` from the Team HFD Microsoft Teams.
 
-## Steps to Run our Python Code
+## Running the code
 
 1. Clone repository to your local machine
 2. Install dependencies with the following commands:
