@@ -30,7 +30,7 @@ To stack and clean violation records and incident data, you may run `clean_addre
 * `FF--D2K-2021-data_full year 2021.csv`
 * `D2K Incident Data July 2018 to JAug 10 2021_Export.csv`
 
-Running this file will result in the creation of the followwing cleaned files:
+Running this file will result in the creation of the following cleaned files:
 * `Non-Residential Incident Data 2018_2021.csv`
 * `Cleaned Addresss and Violation Data 2020_2021.csv`
 
