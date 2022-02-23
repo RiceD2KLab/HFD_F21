@@ -68,7 +68,7 @@ def compile_datasets(datasets: List[pd.DataFrame],
   """
   This method takes a number of datasets and a set of columns to delete from
   each data set if present, and combines all specified datasets into a single
-  dataframe.
+  DataFrame.
   :param datasets: A list of datasets to merge.
   :param filter_cols: Columns to remove when filtering the data.
   :return: Compiled data from sources.
