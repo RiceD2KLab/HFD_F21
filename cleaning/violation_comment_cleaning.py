@@ -53,7 +53,7 @@ if __name__ == "__main__":
                           r"data/Address_&_Violation_Records_data 2021.csv")])
   parser.add_argument("--out", nargs='?',
                       help="Name of output file, without extension.",
-                      default="ViolationData2020and2021")
+                      default="ViolationDataCleanedComments")
   excel_or_csv = parser.add_mutually_exclusive_group()
   
   # Decided to use "csv" as the default output filetype because exporting to
