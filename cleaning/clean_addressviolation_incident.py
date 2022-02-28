@@ -1,4 +1,3 @@
-from itertools import count
 from typing import Iterable, Dict
 
 import pandas as pd
@@ -21,25 +20,14 @@ inc_2018_2021 = inc_2018_2021.rename({
     'Basic Primary Action Taken Code And Description (FD1.48)'})
 
 # stacked address & violation data
-advio_full = pd.concat([av2020, av2021])
-
-# clean stacked address & violation data
-advio_full = advio_full.drop_duplicates()
+address_violation_full = pd.concat([av2020, av2021]).drop_duplicates()
 
 # stacked incident data
-inc_full = pd.concat([inc_full2021, inc_2018_2021])
-
-# clean stacked incident data
-inc_full = inc_full.drop_duplicates()
-
-# export cleaned data
-advio_full.to_csv('Address and Violation Data 2020_2021')
-inc_full.to_csv('Incident Data 2018_2021')
+incident_full = pd.concat([inc_full2021, inc_2018_2021]).drop_duplicates()
 
 # remove residential rows from incident data
-incident = pd.read_csv('Incident Data 2018_2021.csv')
 clean_incident = filter_rows(
-  incident,
+  incident_full,
   {
     'Basic Property Use Code And Description (FD1.46)':
       ['419 - 1 or 2 family dwelling', 419]
@@ -47,30 +35,8 @@ clean_incident = filter_rows(
 clean_incident.to_csv('Non-Residential Incident Data 2018_2021.csv')
 
 # remove rows with empty address component fields from Address and Violation Data
-address_violation_data = pd.read_csv("Address and Violation Data 2020_2021.csv")
-cleaned_addvio = filter_null(
-  address_violation_data,
+cleaned_address_violation = filter_null(
+  address_violation_full,
   ['STATE', 'STNO', 'CITY', 'STNAME', 'ZIP'])
-cleaned_addvio.to_csv('Cleaned Address and Violation Data 2020_2021.csv')
-
-#drop irrelevant columns from placekey tagged Address and Violation Data
-advio_pk = pd.read_csv('Address and Violation Data 2020_2021_valid_pk.csv')
-
-advio_pk = advio_pk.drop(labels= ['APNO', 'APUSEINSPKEY', 'COMPDTTM', 'DESCRIPT', 'Remove Duplication', 'Code', 'FULLNAME',
-'GPSX', 'GPSY', 'GPSZ', 'INSPTYPECAT', 'LOC', 'Location', 'Number of Records', 'OCCUPANCYTYPE', 'PREDIR', 'RESULTBY', 'RESULTDTTM',
-'RESULT', 'SCHEDDTTM', 'SUBDIVDESC', 'SUPERVISOR', 'TEAMDESCRIPTION', 'ViolationStatus', 'WORKTYPE'], axis=1)
-
-#Aggregrate Address & Violation data by PlaceKey ID and compile categorical features into lists.
-advio_pk = advio_pk.groupby('PlaceKey ID').agg(lambda x: list(x))
-
-#Update STADDRESS to only have a single copy of the address corresponding to the PlaceKey ID
-single_address = []
-
-for idx, row in advio_pk.iterrows():
-  single_address.append(row['STADDRESS'][0])
-
-#Update STADDRESS column
-advio_pk['STADDRESS'] = single_address
-
-#Export aggregated A&V data
-advio_pk.to_csv('Address and Violation Data by Property.csv')
+cleaned_address_violation.to_csv(
+  'Cleaned Address and Violation Data 2020_2021.csv')
