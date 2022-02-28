@@ -1,3 +1,4 @@
+from itertools import count
 from typing import Iterable, Dict
 
 import pandas as pd
@@ -51,3 +52,25 @@ cleaned_addvio = filter_null(
   address_violation_data,
   ['STATE', 'STNO', 'CITY', 'STNAME', 'ZIP'])
 cleaned_addvio.to_csv('Cleaned Address and Violation Data 2020_2021.csv')
+
+#drop irrelevant columns from placekey tagged Address and Violation Data
+advio_pk = pd.read_csv('Address and Violation Data 2020_2021_valid_pk.csv')
+
+advio_pk = advio_pk.drop(labels= ['APNO', 'APUSEINSPKEY', 'COMPDTTM', 'DESCRIPT', 'Remove Duplication', 'Code', 'FULLNAME',
+'GPSX', 'GPSY', 'GPSZ', 'INSPTYPECAT', 'LOC', 'Location', 'Number of Records', 'OCCUPANCYTYPE', 'PREDIR', 'RESULTBY', 'RESULTDTTM',
+'RESULT', 'SCHEDDTTM', 'SUBDIVDESC', 'SUPERVISOR', 'TEAMDESCRIPTION', 'ViolationStatus', 'WORKTYPE'], axis=1)
+
+#Aggregrate Address & Violation data by PlaceKey ID and compile categorical features into lists.
+advio_pk = advio_pk.groupby('PlaceKey ID').agg(lambda x: list(x))
+
+#Update STADDRESS to only have a single copy of the address corresponding to the PlaceKey ID
+single_address = []
+
+for idx, row in advio_pk.iterrows():
+  single_address.append(row['STADDRESS'][0])
+
+#Update STADDRESS column
+advio_pk['STADDRESS'] = single_address
+
+#Export aggregated A&V data
+advio_pk.to_csv('Address and Violation Data by Property.csv')
