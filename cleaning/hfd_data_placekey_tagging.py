@@ -86,41 +86,39 @@ def aggregate_address_fields_hcad(data: pd.DataFrame,
   return data
 
 if __name__ == "__main__":
-  # # aggregate STNO and STNAME columns in address and violation data to create
-  # # appropriate input for street_address argument placekey lookup function
-  # add_vio_data = pd.read_csv('Cleaned Address and Violation Data 2020_2021.csv',
-  #                            index_col=0)
+  # aggregate STNO and STNAME columns in address and violation data to create
+  # appropriate input for street_address argument placekey lookup function
+  add_vio_data = pd.read_csv('Cleaned Address and Violation Data 2020_2021.csv',
+                             index_col=0)
 
-  # address_col = "STADDRESS"
-  # add_vio_data_with_placekey = gen_placekey_from_address(
-  #   aggregate_address_fields_violation(add_vio_data, address_col),
-  #   address_col)
+  address_col = "STADDRESS"
+  add_vio_data_with_placekey = gen_placekey_from_address(
+    aggregate_address_fields_violation(add_vio_data, address_col),
+    address_col)
 
-  # with_placekey, without_placekey = split_placekey(add_vio_data_with_placekey)
+  with_placekey, without_placekey = split_placekey(add_vio_data_with_placekey)
 
-  # with_placekey.to_csv(
-  #   "Cleaned Address and Violation Data 2020_2021 Placekey.csv")
-  # without_placekey.to_csv(
-  #   "Cleaned Address and Violation Data 2020_2021 No Placekey.csv")
+  with_placekey.to_csv(
+    "Cleaned Address and Violation Data 2020_2021 Placekey.csv")
+  without_placekey.to_csv(
+    "Cleaned Address and Violation Data 2020_2021 No Placekey.csv")
 
-  # #tag structure fire file for placekeys
-  # struct_fire = pd.read_csv('Structure Fires 2005-2021.csv')
-  # struct_fire_with_placekey = gen_placekey_from_address(
-  #   aggregate_address_fields_structfire(struct_fire, address_col),
-  #   address_col)
-  # with_placekey, without_placekey = split_placekey(struct_fire_with_placekey)
-  # with_placekey.to_csv(
-  #   "Struct_Fire_2005_2021_pk.csv")
-  # without_placekey.to_csv(
-  #   "Struct_Fire_2005_2021_nopk.csv")
+  #tag structure fire file for placekeys
+  struct_fire = pd.read_csv('Structure Fires 2005-2021.csv')
+  struct_fire_with_placekey = gen_placekey_from_address(
+    aggregate_address_fields_structfire(struct_fire, address_col),
+    address_col)
+  with_placekey, without_placekey = split_placekey(struct_fire_with_placekey)
+  with_placekey.to_csv(
+    "Struct_Fire_2005_2021_pk.csv")
+  without_placekey.to_csv(
+    "Struct_Fire_2005_2021_nopk.csv")
 
   #tag HCAD for placekeys
   address_col = "STADDRESS"
   hcad = pd.read_csv('Non-Residential Properties.csv')
-  data1 = aggregate_address_fields_hcad(hcad, address_col)
-  print("finished")
   hcad_with_placekey = gen_placekey_from_address(
-    data1,address_col)
+    aggregate_address_fields_hcad(hcad, address_col),address_col)
   with_placekey, without_placekey = split_placekey(hcad_with_placekey)
   with_placekey.to_csv("HCAD_pk.csv")
   without_placekey.to_csv("HCAD_nopk.csv")
