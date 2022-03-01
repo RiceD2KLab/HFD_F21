@@ -19,3 +19,4 @@ venv.bak/
 .idea/
 *.csv
 *.xlsx
+*.DS_Store
