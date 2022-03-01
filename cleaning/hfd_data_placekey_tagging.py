@@ -59,33 +59,69 @@ def aggregate_address_fields_structfire(data: pd.DataFrame,
             axis=1, inplace=True)
   return data
 
+def aggregate_address_fields_hcad(data: pd.DataFrame,
+                             address_col_name: str) -> pd.DataFrame:
+  """
+  Concatenates the address columns into one column 'STADDRESS' with space
+  between each column entry, deleting the orignal address fields.
+
+  This method requires the input dataframe to have the following address-based
+  columns:
+    "full_address", "city_lookup", "state_lookup", "zip_code_lookup"
+
+  Input:
+    data: a DataFrame representing the input dataset
+    address_col_name: the name of the new addresss column
+  Return: the input DataFrame, with a concatenated address column
+  """
+  # replace empty fields with empty string
+  values = {"site_addr_1": "", "site_addr_2": "", "site_addr_3": "0"}
+  data.fillna(value=values, inplace=True)
+  data['state'] = 'TX'
+  # concatenate in the order of street number, name, suffix
+  data[address_col_name] = data[
+    ['site_addr_1', 'site_addr_2', 'state', "site_addr_3"]].agg(' '.join, axis=1)
+  data.drop(['site_addr_1', 'site_addr_2', 'site_addr_3', "state"],
+            axis=1, inplace=True)
+  return data
+
 if __name__ == "__main__":
-  # aggregate STNO and STNAME columns in address and violation data to create
-  # appropriate input for street_address argument placekey lookup function
-  add_vio_data = pd.read_csv('Cleaned Address and Violation Data 2020_2021.csv',
-                             index_col=0)
+  # # aggregate STNO and STNAME columns in address and violation data to create
+  # # appropriate input for street_address argument placekey lookup function
+  # add_vio_data = pd.read_csv('Cleaned Address and Violation Data 2020_2021.csv',
+  #                            index_col=0)
 
+  # address_col = "STADDRESS"
+  # add_vio_data_with_placekey = gen_placekey_from_address(
+  #   aggregate_address_fields_violation(add_vio_data, address_col),
+  #   address_col)
+
+  # with_placekey, without_placekey = split_placekey(add_vio_data_with_placekey)
+
+  # with_placekey.to_csv(
+  #   "Cleaned Address and Violation Data 2020_2021 Placekey.csv")
+  # without_placekey.to_csv(
+  #   "Cleaned Address and Violation Data 2020_2021 No Placekey.csv")
+
+  # #tag structure fire file for placekeys
+  # struct_fire = pd.read_csv('Structure Fires 2005-2021.csv')
+  # struct_fire_with_placekey = gen_placekey_from_address(
+  #   aggregate_address_fields_structfire(struct_fire, address_col),
+  #   address_col)
+  # with_placekey, without_placekey = split_placekey(struct_fire_with_placekey)
+  # with_placekey.to_csv(
+  #   "Struct_Fire_2005_2021_pk.csv")
+  # without_placekey.to_csv(
+  #   "Struct_Fire_2005_2021_nopk.csv")
+
+  #tag HCAD for placekeys
   address_col = "STADDRESS"
-  add_vio_data_with_placekey = gen_placekey_from_address(
-    aggregate_address_fields_violation(add_vio_data, address_col),
-    address_col)
-
-  with_placekey, without_placekey = split_placekey(add_vio_data_with_placekey)
-
-  with_placekey.to_csv(
-    "Cleaned Address and Violation Data 2020_2021 Placekey.csv")
-  without_placekey.to_csv(
-    "Cleaned Address and Violation Data 2020_2021 No Placekey.csv")
-
-  #tag structure fire file for placekeys
-  struct_fire = pd.read_csv('/Users/antata/Desktop/HFD/datasets/Structure Fires 2005-2021.csv')
-  struct_fire_with_placekey = gen_placekey_from_address(
-    aggregate_address_fields_structfire(struct_fire, address_col),
-    address_col)
-  with_placekey, without_placekey = split_placekey(struct_fire_with_placekey)
-  with_placekey.to_csv(
-    "Struct_Fire_2005_2021_pk.csv")
-  without_placekey.to_csv(
-    "Struct_Fire_2005_2021_nopk.csv")
-
+  hcad = pd.read_csv('Non-Residential Properties.csv')
+  data1 = aggregate_address_fields_hcad(hcad, address_col)
+  print("finished")
+  hcad_with_placekey = gen_placekey_from_address(
+    data1,address_col)
+  with_placekey, without_placekey = split_placekey(hcad_with_placekey)
+  with_placekey.to_csv("HCAD_pk.csv")
+  without_placekey.to_csv("HCAD_nopk.csv")
   

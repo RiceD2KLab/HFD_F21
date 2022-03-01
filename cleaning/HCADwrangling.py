@@ -1,8 +1,8 @@
 import pandas as pd
 
 #import HCAD data - "buildings" (non-residential properties) and "all_properties"
-buildings = pd.read_csv('building_other.csv')
-all_properties = pd.read_csv('HCAD_real_acct.csv')
+buildings = pd.read_csv('building_other.txt', delimiter="\t")
+all_properties = pd.read_csv('real_acct.txt', delimiter="\t")
 
 #Inner join datasets on "acct" feature (unique identifier for each building) to eliminate residential properties
 
