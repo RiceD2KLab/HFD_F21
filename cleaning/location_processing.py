@@ -1,6 +1,7 @@
 from typing import Tuple
 
 import pandas as pd
+import censusgeocode as cgc
 
 
 def split_address(data: pd.DataFrame, col_name: str) -> Tuple[
@@ -56,3 +57,27 @@ def get_valid_geocodes(
     (-180 <= data[longitude_column]) & (data[longitude_column] <= 180)]
 
 
+def get_census_tract(data: pd.DataFrame, latitude_column: str = "latitude",
+                     longitude_column: str = "longitude",
+                     tract_column: str = "FIPS") -> pd.DataFrame:
+  """
+  Add column with census tract number corresponding to the location of a
+  given row in a dataset with latitude and longitudde coordinates.
+
+  :param data: DataFrame with location column fields
+  :param latitude_column: name of numeric latitude data column
+  :param longitude_column: name of numeric longitude data column
+  :param tract_column: name of census tract column to add
+  :return: Updated DataFrame with census tract information.
+  """
+  tracts = []
+  for lat, lng in zip(data[latitude_column], data[longitude_column]):
+    try:
+      census_info = cgc.coordinates(x=lng, y=lat)["Census Tracts"][0]["GEOID"]
+      tracts.append(census_info["Census Tracts"][0]["GEOID"])
+    except Exception:
+      print("Census data lookup failed for ", (lat, lng))
+      tracts.append("0")
+
+  data[tract_column] = tracts
+  return data
