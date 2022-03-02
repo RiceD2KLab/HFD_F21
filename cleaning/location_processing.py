@@ -62,7 +62,7 @@ def get_census_tract(data: pd.DataFrame, latitude_column: str = "latitude",
                      tract_column: str = "FIPS") -> pd.DataFrame:
   """
   Add column with census tract number corresponding to the location of a
-  given row in a dataset with latitude and longitudde coordinates.
+  given row in a dataset with latitude and longitude coordinates.
 
   :param data: DataFrame with location column fields
   :param latitude_column: name of numeric latitude data column
@@ -73,9 +73,9 @@ def get_census_tract(data: pd.DataFrame, latitude_column: str = "latitude",
   tracts = []
   for lat, lng in zip(data[latitude_column], data[longitude_column]):
     try:
-      census_info = cgc.coordinates(x=lng, y=lat)["Census Tracts"][0]["GEOID"]
+      census_info = cgc.coordinates(x=lng, y=lat)
       tracts.append(census_info["Census Tracts"][0]["GEOID"])
-    except Exception:
+    except ValueError:
       print("Census data lookup failed for ", (lat, lng))
       tracts.append("0")
 
