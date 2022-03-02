@@ -6,7 +6,7 @@ import pandas as pd
 def split_address(data: pd.DataFrame, col_name: str) -> Tuple[
   pd.DataFrame, pd.DataFrame]:
   """
-  Splits the input dataset based on whether the address column is complete.
+  Split the input dataset based on whether the address column is complete.
   We assume the address column to take the format [STREET] [CITY] [STATE] [ZIP]
   and is separated by space. If the address is not of this format, we categorize
   the row as invalid.
@@ -34,3 +34,25 @@ def split_address(data: pd.DataFrame, col_name: str) -> Tuple[
   invalid_df = data.filter(items=entries, axis=0)
   data.drop(entries, inplace=True)
   return data, invalid_df
+
+
+def get_valid_geocodes(
+    data: pd.DataFrame,
+    latitude_column: str = "latitude",
+    longitude_column: str = "longitude") -> pd.DataFrame:
+  """
+  Filter rows with valid geocodes (latitude between -90 and 90 and longitude
+  between -180 and 180).
+
+  :param data: A dataframe with latitude and longitude data
+  :param latitude_column: the name of a latitude column. Must have numeric
+    values
+  :param longitude_column: the name of a longitude column. Must have numeric
+    values
+  :return: The DataFrame with proper latitude and longitude columns
+  """
+  return data[
+    (-90 <= data[latitude_column]) & (data[latitude_column] <= 90) &
+    (-180 <= data[longitude_column]) & (data[longitude_column] <= 180)]
+
+
