@@ -3,7 +3,6 @@ from typing import Tuple
 from placekey.api import PlacekeyAPI
 import placekey as pk
 import pandas as pd
-import cleaning.data_wrangling as wrangling
 
 # placekey is a free API and you can get an API key by registering on the website
 PLACEKEY_API_KEY = 'PLACEKEY_API_KEY_HERE'
