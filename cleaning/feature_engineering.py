@@ -68,4 +68,4 @@ for col in cols:
     inspection[col] = inspection[col].str.strip().replace("", "N/A").fillna("N/A")
     dfs.append(inspection[col].value_counts().append(pd.Series([inspec_num], index=[col])))
 df = pd.concat(dfs)
-df.to_csv("Inspection_features.csv", index=0)
+df.to_csv("Inspection_features.csv")
