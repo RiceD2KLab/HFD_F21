@@ -1,6 +1,10 @@
 import pandas as pd
+from ast import literal_eval
+from numpy import nan
 
-full_data = pd.read_csv('full_merge_withincident.csv')
+# PART 1: BINARY VARIABLES
+
+#full_data = pd.read_csv('full_merge_withincident.csv')
 
 def add_binary_feature(data, col_name, feat):
     """
@@ -30,3 +34,24 @@ def add_binary_feature(data, col_name, feat):
 #full_data =  add_binary_feature(full_data, 'INSPTYPE', 'InspectionStatus')
 #full_data.to_csv('Full Merged Data with Binary.csv')
 
+# PART 2: TOTAL COUNT COLUMNS
+
+full_data = pd.read_csv('Full_Merged_Data_with_Binary.csv')
+
+# Create Column of Total Number of Inspections
+print(full_data.dtypes)
+
+full_data['Total_Inspections'] = full_data['INSPTYPE'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
+
+# Create Column of Total Number of Incidents
+
+full_data['Total_Incidents'] = full_data['Basic Incident Number (FD1)'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
+
+# Create Column of Total Number of Violations
+
+#full_data['Total_Violations'] = full_data['VIOLATIONCode'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
+
+full_data['Total_Violations'] = full_data['VIOLATIONCode'].apply(
+   lambda x: sum(1 for list_item in eval(x) if type(list_item)!=float) if type(x)!=float else 0)
+
+full_data.to_csv('Full_Merged_Data_Binaries_Totals.csv')
