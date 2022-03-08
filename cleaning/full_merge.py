@@ -16,7 +16,7 @@ hcad_df = pd.read_csv('HCAD_pk.csv')
 hcad_df = hcad_df.drop_duplicates(subset=["PlaceKey ID"])
 addvio_df = pd.read_csv('Address and Violation Data by Property.csv')
 structfire_df = pd.read_csv('Structure Fires 2005-2021 Aggregated with PK.csv')
-infor_df = pd.read_csv('AggregatedINFOR.csv')
+infor_df = pd.read_csv('INFOR_2018_2021_pk_2.csv')
 incident_df = pd.read_csv('Cleaned_incident_data.csv')
 
 
@@ -32,5 +32,10 @@ merge_result4 = pd.merge(merge_result3, incident_df, how="outer", on=["PlaceKey 
 merge_result4 = merge_result4.drop_duplicates()
 
 
+# Drop Unnecessary Columns
+merge_result4 =  merge_result4.drop(columns=['Unnamed: 0_x','acct','STADDRESS_y','county_lookup','ViolationComment','dispatched_on_local_date','complete_address','Address','Basic Incident Full Address'])
+
 # Export merged dataset
-merge_result4.to_csv(r'full_merge.csv')
+merge_result4.to_csv('full_merge_no_duplicates.csv',index=False)
+
+
