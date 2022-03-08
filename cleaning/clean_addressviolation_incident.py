@@ -41,7 +41,7 @@ cleaned_address_violation = filter_null(
 cleaned_address_violation.to_csv(
   'Cleaned Address and Violation Data 2020_2021.csv')
 
-+#drop irrelevant columns from placekey tagged Address and Violation Data
+#drop irrelevant columns from placekey tagged Address and Violation Data
 advio_pk = pd.read_csv('Address and Violation Data 2020_2021_valid_pk.csv')
 
 advio_pk = advio_pk.drop(labels= ['APNO', 'APUSEINSPKEY', 'COMPDTTM', 'DESCRIPT', 'Remove Duplication', 'Code', 'FULLNAME',
@@ -61,4 +61,4 @@ for idx, row in advio_pk.iterrows():
 advio_pk['STADDRESS'] = single_address
 
 #Export aggregated A&V data
-advio_pk.to_csv('Address and Violation Data by Property.csv')
+#advio_pk.to_csv('Address and Violation Data by Property.csv')
