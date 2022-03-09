@@ -9,7 +9,7 @@ The merged dataset is then outputted to be observed and viewed.
 import pandas as pd
 
 # Read the existing INFOR data with placekeys into a dataframe.
-df = pd.read_csv('Valid_INFOR_2018_2021.csv_1.csv')
+df = pd.read_csv('INFOR_2018_2021_pk_2.csv')
 
 # Drop unnecessary rows from the dataframe.
 df = df.drop(['Inspection #','#','A/P #','Rinspection Date','Scheduled','Completed','Assigned To','Assigned To (Name)','Assigned To Provider','Location','Schedule Order','Unnamed: 18'],axis=1)
@@ -30,4 +30,4 @@ for x in range(len(grouped_df["Address"])):
     grouped_df["Address"][x] = grouped_df["Address"][x][0]
 
 # Export the aggregated dataframe
-grouped_df.to_csv(r'AggregatedINFOR.csv')
+grouped_df.to_csv('AggregatedINFOR.csv')
