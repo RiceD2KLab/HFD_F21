@@ -1,6 +1,7 @@
 import pandas as pd
 from ast import literal_eval
-from numpy import nan
+import numpy as np
+from numpy import NaN, nan
 
 # PART 1: BINARY VARIABLES
 
@@ -56,7 +57,7 @@ full_data['Total_Violations'] = full_data['VIOLATIONCode'].apply(
 
 full_data.to_csv('Full_Merged_Data_Binaries_Totals.csv')
 
-##Extract statistics for inspection data
+#Extract statistics for inspection data
 inspection = pd.read_csv("INFOR_2018_2021_pk.csv")
 inspec_num = len(inspection["Inspection #"].unique())
 # print(inspec_num)
@@ -69,3 +70,36 @@ for col in cols:
     dfs.append(inspection[col].value_counts().append(pd.Series([inspec_num], index=[col])))
 df = pd.concat(dfs)
 df.to_csv("Inspection_features.csv")
+
+#RESULT feature
+
+#data = pd.read_csv('Full_Merged_Data.csv')
+
+def feat_recent(data, feature):
+    """
+    Given a column from a dataframe in which each row is either a list or NaN, 
+    edit the column so that each row contains either the last entry in the list or NaN.
+   
+    data: pandas dataframe, contains column to be analyzed
+    feature: string, name of feature to be edited
+
+    Returns data with the row values of feature edited to be either the last entry of the list or NaN.
+    """
+
+    results = data[feature]
+    updated_results = []
+
+    for idx, val in results.iteritems():
+        if type(val) == float:
+            updated_results.append(val)
+
+        else:
+            new_res = literal_eval(val)[-1]
+            updated_results.append(new_res.replace(' ', ''))
+
+    data[feature] = updated_results
+
+    return data
+
+#df = feat_recent(data, 'Result')
+#df.to_csv('Full_Merged_Data_ZS.csv')
