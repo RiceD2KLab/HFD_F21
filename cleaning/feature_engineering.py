@@ -1,11 +1,14 @@
+import codecs
 import pandas as pd
 from ast import literal_eval
 import numpy as np
 from numpy import NaN, nan
+import re
+from statistics import mode
 
-# PART 1: BINARY VARIABLES
+# BINARY VARIABLES
 
-full_data = pd.read_csv('full_merge_no_duplicates.csv')
+#full_data = pd.read_csv('full_merge_no_duplicates.csv')
 
 def add_binary_feature(data, col_name, feat):
     """
@@ -32,10 +35,12 @@ def add_binary_feature(data, col_name, feat):
 
     return data
 
-full_data =  add_binary_feature(full_data, 'INSPTYPE', 'InspectionStatus')
+#full_data =  add_binary_feature(full_data, 'INSPTYPE', 'InspectionStatus')
 #full_data.to_csv('Full Merged Data with Binary.csv')
 
-# PART 2: TOTAL COUNT COLUMNS
+"""
+
+# TOTAL COUNT COLUMNS
 
 # Create Column of Total Number of Inspections
 
@@ -69,7 +74,9 @@ for col in cols:
 df = pd.concat(dfs)
 df.to_csv("Inspection_features.csv")
 
-#RESULT feature
+"""
+
+# RESULT FEATURE
 
 #data = pd.read_csv('Full_Merged_Data.csv')
 
@@ -101,3 +108,60 @@ def feat_recent(data, feature):
 
 #df = feat_recent(data, 'Result')
 #df.to_csv('Full_Merged_Data_ZS.csv')
+
+# BUILDING CODE VARIABLE
+
+#data = pd.read_csv('Full_Merged_Data_ZS.csv')
+
+def feat_building_code(data):
+    """
+    Input: Merged Property Dataset
+    Output: Merged Property Dataset with new categorical column of the INFOR building category for each 
+    property (row) based on the Basic Property Use Code And Description (FD1.46) column.
+    """
+    property_col = data.loc[:,'Basic Property Use Code And Description (FD1.46)']
+
+    code_list=[]
+    for row in property_col:
+        property_codes=[]
+        if type(row) != float:
+            for item in literal_eval(row):
+                if len(re.findall("\d+", item))!=0:
+                    code = int(re.findall("\d+", item)[0])
+                    property_codes.append(code)
+            if len(property_codes) != 0:
+                code = mode(property_codes)
+            else:
+                code = 0
+        else:
+            code=0
+        code_list.append(code)
+
+    building_category=[]
+    for code in code_list:
+        first_digit = int(str(code)[0])
+        if first_digit==0:
+            building_category.append("Unknown")
+        elif first_digit==1:
+            building_category.append("Assembly")
+        elif first_digit==2:
+            building_category.append("Educational")
+        elif first_digit==3:
+            building_category.append("Health Care, Detention, and Correction")
+        elif first_digit==4:
+            building_category.append("Residential")
+        elif first_digit==5:
+            building_category.append("Mercantile, Business")
+        elif first_digit==6:
+            building_category.append("Industrial, Utility, Defense, Agriculture, Mining")
+        elif first_digit==7:
+            building_category.append("Manufacturing, Processing")
+        elif first_digit==8:
+            building_category.append("Storage")
+        elif first_digit==9:
+            building_category.append("Outside or Special Property")
+
+    data['Property_Code']=building_category
+
+#feat_building_code(data)
+#data.to_csv('Full_Merged_Data_TC.csv')
