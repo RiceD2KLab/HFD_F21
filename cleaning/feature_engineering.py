@@ -55,7 +55,7 @@ full_data.to_csv('Full_Merged_Data.csv')
 
 ## PART 3: Extract statistics for inspection data
 
-inspection = pd.read_csv("/Users/tessacannon/Downloads/INFOR_2018_2021_pk_2.csv")
+inspection = pd.read_csv("INFOR_2018_2021_pk_2.csv")
 inspec_num = len(inspection["Inspection #"].unique())
 # print(inspec_num)
 inspection.drop_duplicates(inplace=True)

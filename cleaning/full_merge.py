@@ -16,7 +16,7 @@ hcad_df = pd.read_csv('HCAD_pk.csv')
 hcad_df = hcad_df.drop_duplicates(subset=["PlaceKey ID"])
 addvio_df = pd.read_csv('Address and Violation Data by Property.csv')
 structfire_df = pd.read_csv('Structure Fires 2005-2021 Aggregated with PK.csv')
-infor_df = pd.read_csv('INFOR_2018_2021_pk_2.csv')
+infor_df = pd.read_csv('AggregatedINFOR.csv')
 incident_df = pd.read_csv('Cleaned_incident_data.csv')
 
 
