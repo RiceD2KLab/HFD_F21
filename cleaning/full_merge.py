@@ -32,5 +32,10 @@ merge_result4 = pd.merge(merge_result3, incident_df, how="outer", on=["PlaceKey 
 merge_result4 = merge_result4.drop_duplicates()
 
 
+# Drop Unnecessary Columns
+merge_result4 =  merge_result4.drop(columns=['Unnamed: 0_x','acct','STADDRESS_y','county_lookup','ViolationComment','dispatched_on_local_date','complete_address','Address','Basic Incident Full Address'])
+
 # Export merged dataset
-merge_result4.to_csv(r'full_merge.csv')
+merge_result4.to_csv('full_merge_no_duplicates.csv',index=False)
+
+

@@ -1,11 +1,14 @@
+import codecs
 import pandas as pd
 from ast import literal_eval
 import numpy as np
 from numpy import NaN, nan
+import re
+from statistics import mode
 
-# PART 1: BINARY VARIABLES
+# BINARY VARIABLES
 
-#full_data = pd.read_csv('full_merge_withincident.csv')
+#full_data = pd.read_csv('full_merge_no_duplicates.csv')
 
 def add_binary_feature(data, col_name, feat):
     """
@@ -35,12 +38,11 @@ def add_binary_feature(data, col_name, feat):
 #full_data =  add_binary_feature(full_data, 'INSPTYPE', 'InspectionStatus')
 #full_data.to_csv('Full Merged Data with Binary.csv')
 
-# PART 2: TOTAL COUNT COLUMNS
+"""
 
-full_data = pd.read_csv('Full_Merged_Data_with_Binary.csv')
+# TOTAL COUNT COLUMNS
 
 # Create Column of Total Number of Inspections
-print(full_data.dtypes)
 
 full_data['Total_Inspections'] = full_data['INSPTYPE'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
 
@@ -55,10 +57,11 @@ full_data['Total_Incidents'] = full_data['Basic Incident Number (FD1)'].apply(la
 full_data['Total_Violations'] = full_data['VIOLATIONCode'].apply(
    lambda x: sum(1 for list_item in eval(x) if type(list_item)!=float) if type(x)!=float else 0)
 
-full_data.to_csv('Full_Merged_Data_Binaries_Totals.csv')
+full_data.to_csv('Full_Merged_Data.csv')
 
-#Extract statistics for inspection data
-inspection = pd.read_csv("INFOR_2018_2021_pk.csv")
+## PART 3: Extract statistics for inspection data
+
+inspection = pd.read_csv("INFOR_2018_2021_pk_2.csv")
 inspec_num = len(inspection["Inspection #"].unique())
 # print(inspec_num)
 inspection.drop_duplicates(inplace=True)
@@ -71,7 +74,9 @@ for col in cols:
 df = pd.concat(dfs)
 df.to_csv("Inspection_features.csv")
 
-#RESULT feature
+"""
+
+# RESULT FEATURE
 
 #data = pd.read_csv('Full_Merged_Data.csv')
 
@@ -103,3 +108,60 @@ def feat_recent(data, feature):
 
 #df = feat_recent(data, 'Result')
 #df.to_csv('Full_Merged_Data_ZS.csv')
+
+# BUILDING CODE VARIABLE
+
+#data = pd.read_csv('Full_Merged_Data_ZS.csv')
+
+def feat_building_code(data):
+    """
+    Input: Merged Property Dataset
+    Output: Merged Property Dataset with new categorical column of the INFOR building category for each 
+    property (row) based on the Basic Property Use Code And Description (FD1.46) column.
+    """
+    property_col = data.loc[:,'Basic Property Use Code And Description (FD1.46)']
+
+    code_list=[]
+    for row in property_col:
+        property_codes=[]
+        if type(row) != float:
+            for item in literal_eval(row):
+                if len(re.findall("\d+", item))!=0:
+                    code = int(re.findall("\d+", item)[0])
+                    property_codes.append(code)
+            if len(property_codes) != 0:
+                code = mode(property_codes)
+            else:
+                code = 0
+        else:
+            code=0
+        code_list.append(code)
+
+    building_category=[]
+    for code in code_list:
+        first_digit = int(str(code)[0])
+        if first_digit==0:
+            building_category.append("Unknown")
+        elif first_digit==1:
+            building_category.append("Assembly")
+        elif first_digit==2:
+            building_category.append("Educational")
+        elif first_digit==3:
+            building_category.append("Health Care, Detention, and Correction")
+        elif first_digit==4:
+            building_category.append("Residential")
+        elif first_digit==5:
+            building_category.append("Mercantile, Business")
+        elif first_digit==6:
+            building_category.append("Industrial, Utility, Defense, Agriculture, Mining")
+        elif first_digit==7:
+            building_category.append("Manufacturing, Processing")
+        elif first_digit==8:
+            building_category.append("Storage")
+        elif first_digit==9:
+            building_category.append("Outside or Special Property")
+
+    data['Property_Code']=building_category
+
+#feat_building_code(data)
+#data.to_csv('Full_Merged_Data_TC.csv')
