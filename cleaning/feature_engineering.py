@@ -131,6 +131,34 @@ def feat_building_code(data):
 
 # YUXIN: TRUE INSPECTION VARIABLE
 
+def add_true_incident(file, feature):
+    """
+    Given a file name and a feature name, add a new column showing the result of feature engineering.
+    
+    file: the name of the fulled merged dataset
+    feature: the name of the feature being engineered
+    
+    Return data with the new feature engineering output.
+    """
+    data = pd.read_csv(file)
+    col = data[feature]
+    newcol = []
+    for i in range(len(col)):
+        count = 0
+        if not pd.isnull(col[i]):
+            val = col[i][1:-1]
+            val = val.split('\'')
+            for j in val:
+                if not j.startswith('7') and not j.startswith(',') and j != '' and not j.startswith('NNN'):
+                    count += 1
+        newcol.append(count)
+    data['True_Incident'] = newcol
+
+add_true_incident('Full_Merged_Data_TC_Houston.csv', 'Basic Incident Type Code And Description (FD1.21)')
+data
+
+#data.to_csv('Full_Merged_Data_YG_Houston.csv')
+
 # JOSH: PRIMARY ACTION TAKEN
 
 # ANNITA: STRUCTURE FIRE VARIABLES
