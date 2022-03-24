@@ -85,6 +85,7 @@ def aggregate_address_fields_hcad(data: pd.DataFrame,
             axis=1, inplace=True)
   return data
 
+"""
 if __name__ == "__main__":
   # aggregate STNO and STNAME columns in address and violation data to create
   # appropriate input for street_address argument placekey lookup function
@@ -114,12 +115,13 @@ if __name__ == "__main__":
   without_placekey.to_csv(
     "Struct_Fire_2005_2021_nopk.csv")
 
-  #tag HCAD for placekeys
-  address_col = "STADDRESS"
-  hcad = pd.read_csv('Non-Residential Properties.csv')
-  hcad_with_placekey = gen_placekey_from_address(
-    aggregate_address_fields_hcad(hcad, address_col),address_col)
-  with_placekey, without_placekey = split_placekey(hcad_with_placekey)
-  with_placekey.to_csv("HCAD_pk.csv")
-  without_placekey.to_csv("HCAD_nopk.csv")
+"""
+
+#tag HCAD for placekeysk
+address_col = "STADDRESS"
+hcad = pd.read_csv('Non-Residential_Properties.csv')
+hcad_with_placekey = gen_placekey_from_address(aggregate_address_fields_hcad(hcad, address_col),address_col)
+with_placekey, without_placekey = split_placekey(hcad_with_placekey)
+with_placekey.to_csv("HCAD_pk.csv")
+without_placekey.to_csv("HCAD_nopk.csv")
   
