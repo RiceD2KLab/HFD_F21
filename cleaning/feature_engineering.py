@@ -164,6 +164,102 @@ data
 # ANNITA: STRUCTURE FIRE VARIABLES
 
 # JARRETT: TIME VARIABLES
+def add_incident_inspection_time(data):
+    """
+    Given a file name and a feature name, add new columns showing the result of feature engineering.
+
+    file: the name of the fulled merged dataset
+    feature: the name of the feature being engineered
+
+    Return data with the new feature engineering output, which has a binary column to indicate if a property
+    has had an inspection in the last year, 2 years, and 5 years, and if a property has had an incident in the
+    past year, 2 years, or 5 years.
+    """
+    incidentTime_col = data.loc[:, 'Basic Incident Date Time']
+    incidentTime_1yr = []
+    incidentTime_2yr = []
+    incidentTime_5yr = []
+    for row in incidentTime_col:
+        if type(row) != float:
+            dummyValue = pd.to_datetime(946684800, unit='s')
+            dummyValue_init = dummyValue
+            for item in literal_eval(row):
+                if len(item.split("/")[2].split(" ")[0]) == 2:
+                    item_time = pd.to_datetime(item, format='%m/%d/%y %H:%M')
+                if len(item.split("/")[2].split(" ")[0]) == 4:
+                    item_time = pd.to_datetime(item, format='%m/%d/%Y %H:%M')
+                if item_time >= dummyValue:
+                    dummyValue = item_time
+            if dummyValue != dummyValue_init:
+                if dummyValue > pd.to_datetime(1609459200, unit='s'): #if most recent date is after Jan. 1, 2021
+                    code_1yr = 1
+                else:
+                    code_1yr = 0
+                if dummyValue > pd.to_datetime(1577836800, unit='s'): #if most recent date is after Jan. 1, 2020
+                    code_2yr = 1
+                else:
+                    code_2yr = 0
+                if dummyValue > pd.to_datetime(1483228800, unit='s'): #if most recent date is after Jan. 1, 2017
+                    code_5yr = 1
+                else:
+                    code_5yr = 0
+            else:
+                code_1yr = 0
+                code_2yr = 0
+                code_5yr = 0
+        else:
+            code_1yr = 0
+            code_2yr = 0
+            code_5yr = 0
+        incidentTime_1yr.append(code_1yr)
+        incidentTime_2yr.append(code_2yr)
+        incidentTime_5yr.append(code_5yr)
+    data["incidentTime_1yr"] = incidentTime_1yr
+    data["incidentTime_2yr"] = incidentTime_2yr
+    data["incidentTime_5yr"] = incidentTime_5yr
+
+    # Adding inspection features
+    inspectTime_col = data.loc[:, 'Processed / Last Inspected']
+    inspectTime_1yr = []
+    inspectTime_2yr = []
+    inspectTime_5yr = []
+    for row in inspectTime_col:
+        if type(row) != float:
+            dummyValue = pd.to_datetime(946684800, unit='s')
+            dummyValue_init = dummyValue
+            for item in literal_eval(row):
+                item_time = pd.to_datetime(item, format='%m/%d/%Y %H:%M')
+                if item_time >= dummyValue:
+                    dummyValue = item_time
+            if dummyValue != dummyValue_init:
+                if dummyValue > pd.to_datetime(1609459200, unit='s'): #if most recent date is after Jan. 1, 2021
+                    code_1yr = 1
+                else:
+                    code_1yr = 0
+                if dummyValue > pd.to_datetime(1577836800, unit='s'): #if most recent date is after Jan. 1, 2020
+                    code_2yr = 1
+                else:
+                    code_2yr = 0
+                if dummyValue > pd.to_datetime(1483228800, unit='s'): #if most recent date is after Jan. 1, 2017
+                    code_5yr = 1
+                else:
+                    code_5yr = 0
+            else:
+                code_1yr = 0
+                code_2yr = 0
+                code_5yr = 0
+        else:
+            code_1yr = 0
+            code_2yr = 0
+            code_5yr = 0
+        inspectTime_1yr.append(code_1yr)
+        inspectTime_2yr.append(code_2yr)
+        inspectTime_5yr.append(code_5yr)
+    data["inspectTime_1yr"] = inspectTime_1yr
+    data["inspectTime_2yr"] = inspectTime_2yr
+    data["inspectTime_5yr"] = inspectTime_5yr
+
+    return data
 
 # Inspection Status
 full_data =  add_binary_feature(full_data, 'INSPTYPE', 'InspectionStatus')
@@ -177,3 +273,5 @@ full_data['Total_Violations'] = full_data['VIOLATIONCode'].apply(lambda x: sum(1
 full_data = feat_recent(full_data, 'Result')
 # Building Codes
 feat_building_code(full_data)
+# Time Variables
+full_data = add_incident_inspection_time(full_data)
