@@ -19,9 +19,6 @@ df['Section'] = df['Section'].replace(to_replace = 'School', value ='SCH/INS') #
 df['Section'] = df['Section'].replace(to_replace = ' ', value ='GO') # Identify blank entries as general occupancy
 df['Section'] = df['Section'].fillna(value ='GO') # Identify blank entries as general occupancy
 
-# Convert recorded dates from strings to dates
-df['Processed / Last Inspected'] = pd.to_datetime(df['Processed / Last Inspected'], format='%m/%d/%Y %H:%M')
-
 # Aggregate the data by unique placekey
 grouped_df = df.groupby('PlaceKey ID').agg(lambda x: list(x))
 
