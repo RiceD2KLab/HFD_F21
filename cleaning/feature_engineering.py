@@ -8,7 +8,7 @@ from statistics import mode
 
 # BINARY VARIABLES
 
-#full_data = pd.read_csv('full_merge_no_duplicates.csv')
+full_data = pd.read_csv('full_merge_no_duplicates.csv')
 
 def add_binary_feature(data, col_name, feat):
     """
@@ -35,50 +35,21 @@ def add_binary_feature(data, col_name, feat):
 
     return data
 
-#full_data =  add_binary_feature(full_data, 'INSPTYPE', 'InspectionStatus')
-#full_data.to_csv('Full Merged Data with Binary.csv')
-
-"""
-
 # TOTAL COUNT COLUMNS
 
 # Create Column of Total Number of Inspections
 
-full_data['Total_Inspections'] = full_data['INSPTYPE'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
+#full_data['Total_Inspections'] = full_data['INSPTYPE'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
 
 # Create Column of Total Number of Incidents
 
-full_data['Total_Incidents'] = full_data['Basic Incident Number (FD1)'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
+#full_data['Total_Incidents'] = full_data['Basic Incident Number (FD1)'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
 
 # Create Column of Total Number of Violations
 
-#full_data['Total_Violations'] = full_data['VIOLATIONCode'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
+#full_data['Total_Violations'] = full_data['VIOLATIONCode'].apply(lambda x: sum(1 for list_item in eval(x) if type(list_item)!=float) if type(x)!=float else 0)
 
-full_data['Total_Violations'] = full_data['VIOLATIONCode'].apply(
-   lambda x: sum(1 for list_item in eval(x) if type(list_item)!=float) if type(x)!=float else 0)
-
-full_data.to_csv('Full_Merged_Data.csv')
-
-## PART 3: Extract statistics for inspection data
-
-inspection = pd.read_csv("INFOR_2018_2021_pk_2.csv")
-inspec_num = len(inspection["Inspection #"].unique())
-# print(inspec_num)
-inspection.drop_duplicates(inplace=True)
-# print(len(inspection.index))
-cols = ["Inspection Type", "Application Type", "Result", "Section", "Team"]
-dfs = []
-for col in cols:
-    inspection[col] = inspection[col].str.strip().replace("", "N/A").fillna("N/A")
-    dfs.append(inspection[col].value_counts().append(pd.Series([inspec_num], index=[col])))
-df = pd.concat(dfs)
-df.to_csv("Inspection_features.csv")
-
-"""
-
-# RESULT FEATURE
-
-#data = pd.read_csv('Full_Merged_Data.csv')
+# RESULT VARIABLE
 
 def feat_recent(data, feature):
     """
@@ -106,12 +77,7 @@ def feat_recent(data, feature):
 
     return data
 
-#df = feat_recent(data, 'Result')
-#df.to_csv('Full_Merged_Data_ZS.csv')
-
 # BUILDING CODE VARIABLE
-
-#data = pd.read_csv('Full_Merged_Data_ZS.csv')
 
 def feat_building_code(data):
     """
@@ -163,5 +129,23 @@ def feat_building_code(data):
 
     data['Property_Code']=building_category
 
-#feat_building_code(data)
-#data.to_csv('Full_Merged_Data_TC.csv')
+# YUXIN: TRUE INSPECTION VARIABLE
+
+# JOSH: PRIMARY ACTION TAKEN
+
+# ANNITA: STRUCTURE FIRE VARIABLES
+
+# JARRETT: TIME VARIABLES
+
+# Inspection Status
+full_data =  add_binary_feature(full_data, 'INSPTYPE', 'InspectionStatus')
+# Total Inspections
+full_data['Total_Inspections'] = full_data['INSPTYPE'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
+# Total Incidents
+full_data['Total_Incidents'] = full_data['Basic Incident Number (FD1)'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
+# Total Violations
+full_data['Total_Violations'] = full_data['VIOLATIONCode'].apply(lambda x: sum(1 for list_item in eval(x) if type(list_item)!=float) if type(x)!=float else 0)
+# Result Variable
+full_data = feat_recent(full_data, 'Result')
+# Building Codes
+feat_building_code(full_data)
