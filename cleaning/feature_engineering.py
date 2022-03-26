@@ -4,7 +4,8 @@ from ast import literal_eval
 import numpy as np
 from numpy import NaN, nan
 import re
-from statistics import mode
+from statistics import mode, mean
+import math
 
 # BINARY VARIABLES
 
@@ -155,14 +156,36 @@ def add_true_incident(file, feature):
     data['True_Incident'] = newcol
 
 add_true_incident('Full_Merged_Data_TC_Houston.csv', 'Basic Incident Type Code And Description (FD1.21)')
-data
+
 
 #data.to_csv('Full_Merged_Data_YG_Houston.csv')
 
 # JOSH: PRIMARY ACTION TAKEN
 
 # ANNITA: STRUCTURE FIRE VARIABLES
-
+def fire_spread_property_lost(df):
+    """
+    Adds a "Binary_Property_Lost" column to the input dataframe encoding whether property lost has ever been recorded for a given property. Adds a "Fire_Spread_Mean" column to the input dataframe encoding the degree of fire spread with a scale of 1 to 5. 
+    """
+    df['Fire_Spread_Mean'] = nan
+    df['Binary_Property_Lost'] = nan
+    for i, row in df.iterrows():
+        if type(row["fire_spread"]) != float:
+            fire_spread = eval(row["fire_spread"])
+            filtered_fire_spread = [eval(item[0]) for item in fire_spread if type(item)!=float]
+            if len(filtered_fire_spread) != 0:
+                df.iat[i, df.columns.get_loc('Fire_Spread_Mean')] = mean(filtered_fire_spread)
+        if type(row["totalSaved"]) != float:
+            total_saved = eval(row["totalSaved"])
+            filtered_saved = [item for item in total_saved if not math.isnan(item)]
+            if len(filtered_saved) != 0:
+                binary = 0
+                for elem in filtered_saved:
+                    if elem < 0:
+                        binary = 1
+                        break
+                df.iat[i, df.columns.get_loc('Binary_Property_Lost')] = binary
+    return df
 # JARRETT: TIME VARIABLES
 def add_incident_inspection_time(data):
     """

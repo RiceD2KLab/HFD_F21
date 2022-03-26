@@ -78,6 +78,7 @@ def aggregate_address_fields_hcad(data: pd.DataFrame,
   values = {"site_addr_1": "", "site_addr_2": "", "site_addr_3": "0"}
   data.fillna(value=values, inplace=True)
   data['state'] = 'TX'
+  hcad['site_addr_3'] = hcad['site_addr_3'].astype(str)
   # concatenate in the order of street number, name, suffix
   data[address_col_name] = data[
     ['site_addr_1', 'site_addr_2', 'state', "site_addr_3"]].agg(' '.join, axis=1)
@@ -119,7 +120,7 @@ if __name__ == "__main__":
 
 #tag HCAD for placekeysk
 address_col = "STADDRESS"
-hcad = pd.read_csv('Non-Residential_Properties.csv')
+hcad = pd.read_csv('Non-Residential_Properties.csv', index_col=0)
 hcad_with_placekey = gen_placekey_from_address(aggregate_address_fields_hcad(hcad, address_col),address_col)
 with_placekey, without_placekey = split_placekey(hcad_with_placekey)
 with_placekey.to_csv("HCAD_pk.csv")
