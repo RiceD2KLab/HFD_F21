@@ -4,11 +4,12 @@ from ast import literal_eval
 import numpy as np
 from numpy import NaN, nan
 import re
-from statistics import mode
+from statistics import mode, mean
+import math
 
 # BINARY VARIABLES
 
-#full_data = pd.read_csv('full_merge_no_duplicates.csv')
+full_data = pd.read_csv('Full_Merged_Data_032622.csv')
 
 def add_binary_feature(data, col_name, feat):
     """
@@ -23,62 +24,38 @@ def add_binary_feature(data, col_name, feat):
 
     binaries = []
     empty_status = data[col_name].isnull()
+    main_col = data[col_name]
 
     for idx, val in empty_status.iteritems():
         if val == True:
             binaries.append(0)
         
         else:
-            binaries.append(1)
+            if main_col[idx] == 0:
+                binaries.append(0)
+            
+            else:
+                binaries.append(1)
     
     data[feat] = binaries 
 
     return data
 
-#full_data =  add_binary_feature(full_data, 'INSPTYPE', 'InspectionStatus')
-#full_data.to_csv('Full Merged Data with Binary.csv')
-
-"""
-
 # TOTAL COUNT COLUMNS
 
 # Create Column of Total Number of Inspections
 
-full_data['Total_Inspections'] = full_data['INSPTYPE'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
+#full_data['Total_Inspections'] = full_data['INSPTYPE'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
 
 # Create Column of Total Number of Incidents
 
-full_data['Total_Incidents'] = full_data['Basic Incident Number (FD1)'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
+#full_data['Total_Incidents'] = full_data['Basic Incident Number (FD1)'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
 
 # Create Column of Total Number of Violations
 
-#full_data['Total_Violations'] = full_data['VIOLATIONCode'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
+#full_data['Total_Violations'] = full_data['VIOLATIONCode'].apply(lambda x: sum(1 for list_item in eval(x) if type(list_item)!=float) if type(x)!=float else 0)
 
-full_data['Total_Violations'] = full_data['VIOLATIONCode'].apply(
-   lambda x: sum(1 for list_item in eval(x) if type(list_item)!=float) if type(x)!=float else 0)
-
-full_data.to_csv('Full_Merged_Data.csv')
-
-## PART 3: Extract statistics for inspection data
-
-inspection = pd.read_csv("INFOR_2018_2021_pk_2.csv")
-inspec_num = len(inspection["Inspection #"].unique())
-# print(inspec_num)
-inspection.drop_duplicates(inplace=True)
-# print(len(inspection.index))
-cols = ["Inspection Type", "Application Type", "Result", "Section", "Team"]
-dfs = []
-for col in cols:
-    inspection[col] = inspection[col].str.strip().replace("", "N/A").fillna("N/A")
-    dfs.append(inspection[col].value_counts().append(pd.Series([inspec_num], index=[col])))
-df = pd.concat(dfs)
-df.to_csv("Inspection_features.csv")
-
-"""
-
-# RESULT FEATURE
-
-#data = pd.read_csv('Full_Merged_Data.csv')
+# RESULT VARIABLE
 
 def feat_recent(data, feature):
     """
@@ -106,12 +83,7 @@ def feat_recent(data, feature):
 
     return data
 
-#df = feat_recent(data, 'Result')
-#df.to_csv('Full_Merged_Data_ZS.csv')
-
 # BUILDING CODE VARIABLE
-
-#data = pd.read_csv('Full_Merged_Data_ZS.csv')
 
 def feat_building_code(data):
     """
@@ -163,5 +135,174 @@ def feat_building_code(data):
 
     data['Property_Code']=building_category
 
-#feat_building_code(data)
-#data.to_csv('Full_Merged_Data_TC.csv')
+# YUXIN: TRUE INSPECTION VARIABLE
+
+def add_true_incident(file, feature):
+    """
+    Given a file name and a feature name, add a new column showing the result of feature engineering.
+    
+    file: the name of the fulled merged dataset
+    feature: the name of the feature being engineered
+    
+    Return data with the new feature engineering output.
+    """
+    data = pd.read_csv(file)
+    col = data[feature]
+    newcol = []
+    for i in range(len(col)):
+        count = 0
+        if not pd.isnull(col[i]):
+            val = col[i][1:-1]
+            val = val.split('\'')
+            for j in val:
+                if not j.startswith('7') and not j.startswith(',') and j != '' and not j.startswith('NNN'):
+                    count += 1
+        newcol.append(count)
+    data['True_Incident'] = newcol
+
+add_true_incident('Full_Merged_Data_TC_Houston.csv', 'Basic Incident Type Code And Description (FD1.21)')
+
+
+#data.to_csv('Full_Merged_Data_YG_Houston.csv')
+
+# JOSH: PRIMARY ACTION TAKEN
+
+# ANNITA: STRUCTURE FIRE VARIABLES
+def fire_spread_property_lost(df):
+    """
+    Adds a "Binary_Property_Lost" column to the input dataframe encoding whether property lost has ever been recorded for a given property. Adds a "Fire_Spread_Mean" column to the input dataframe encoding the degree of fire spread with a scale of 1 to 5. 
+    """
+    df['Fire_Spread_Mean'] = nan
+    df['Binary_Property_Lost'] = nan
+    for i, row in df.iterrows():
+        if type(row["fire_spread"]) != float:
+            fire_spread = eval(row["fire_spread"])
+            filtered_fire_spread = [eval(item[0]) for item in fire_spread if type(item)!=float]
+            if len(filtered_fire_spread) != 0:
+                df.iat[i, df.columns.get_loc('Fire_Spread_Mean')] = mean(filtered_fire_spread)
+        if type(row["totalSaved"]) != float:
+            total_saved = eval(row["totalSaved"])
+            filtered_saved = [item for item in total_saved if not math.isnan(item)]
+            if len(filtered_saved) != 0:
+                binary = 0
+                for elem in filtered_saved:
+                    if elem < 0:
+                        binary = 1
+                        break
+                df.iat[i, df.columns.get_loc('Binary_Property_Lost')] = binary
+    return df
+
+# JARRETT: TIME VARIABLES
+def add_incident_inspection_time(data):
+    """
+    Given a file name and a feature name, add new columns showing the result of feature engineering.
+
+    file: the name of the fulled merged dataset
+    feature: the name of the feature being engineered
+
+    Return data with the new feature engineering output, which has a binary column to indicate if a property
+    has had an inspection in the last year, 2 years, and 5 years, and if a property has had an incident in the
+    past year, 2 years, or 5 years.
+    """
+    incidentTime_col = data.loc[:, 'Basic Incident Date Time']
+    incidentTime_1yr = []
+    incidentTime_2yr = []
+    incidentTime_5yr = []
+    for row in incidentTime_col:
+        if type(row) != float:
+            dummyValue = pd.to_datetime(946684800, unit='s')
+            dummyValue_init = dummyValue
+            for item in literal_eval(row):
+                if len(item.split("/")[2].split(" ")[0]) == 2:
+                    item_time = pd.to_datetime(item, format='%m/%d/%y %H:%M')
+                if len(item.split("/")[2].split(" ")[0]) == 4:
+                    item_time = pd.to_datetime(item, format='%m/%d/%Y %H:%M')
+                if item_time >= dummyValue:
+                    dummyValue = item_time
+            if dummyValue != dummyValue_init:
+                if dummyValue > pd.to_datetime(1609459200, unit='s'): #if most recent date is after Jan. 1, 2021
+                    code_1yr = 1
+                else:
+                    code_1yr = 0
+                if dummyValue > pd.to_datetime(1577836800, unit='s'): #if most recent date is after Jan. 1, 2020
+                    code_2yr = 1
+                else:
+                    code_2yr = 0
+                if dummyValue > pd.to_datetime(1483228800, unit='s'): #if most recent date is after Jan. 1, 2017
+                    code_5yr = 1
+                else:
+                    code_5yr = 0
+            else:
+                code_1yr = 0
+                code_2yr = 0
+                code_5yr = 0
+        else:
+            code_1yr = 0
+            code_2yr = 0
+            code_5yr = 0
+        incidentTime_1yr.append(code_1yr)
+        incidentTime_2yr.append(code_2yr)
+        incidentTime_5yr.append(code_5yr)
+    data["incidentTime_1yr"] = incidentTime_1yr
+    data["incidentTime_2yr"] = incidentTime_2yr
+    data["incidentTime_5yr"] = incidentTime_5yr
+
+    # Adding inspection features
+    inspectTime_col = data.loc[:, 'Processed / Last Inspected']
+    inspectTime_1yr = []
+    inspectTime_2yr = []
+    inspectTime_5yr = []
+    for row in inspectTime_col:
+        if type(row) != float:
+            dummyValue = pd.to_datetime(946684800, unit='s')
+            dummyValue_init = dummyValue
+            for item in literal_eval(row):
+                item_time = pd.to_datetime(item, format='%m/%d/%Y %H:%M')
+                if item_time >= dummyValue:
+                    dummyValue = item_time
+            if dummyValue != dummyValue_init:
+                if dummyValue > pd.to_datetime(1609459200, unit='s'): #if most recent date is after Jan. 1, 2021
+                    code_1yr = 1
+                else:
+                    code_1yr = 0
+                if dummyValue > pd.to_datetime(1577836800, unit='s'): #if most recent date is after Jan. 1, 2020
+                    code_2yr = 1
+                else:
+                    code_2yr = 0
+                if dummyValue > pd.to_datetime(1483228800, unit='s'): #if most recent date is after Jan. 1, 2017
+                    code_5yr = 1
+                else:
+                    code_5yr = 0
+            else:
+                code_1yr = 0
+                code_2yr = 0
+                code_5yr = 0
+        else:
+            code_1yr = 0
+            code_2yr = 0
+            code_5yr = 0
+        inspectTime_1yr.append(code_1yr)
+        inspectTime_2yr.append(code_2yr)
+        inspectTime_5yr.append(code_5yr)
+    data["inspectTime_1yr"] = inspectTime_1yr
+    data["inspectTime_2yr"] = inspectTime_2yr
+    data["inspectTime_5yr"] = inspectTime_5yr
+
+    return data
+
+# Inspection Status
+full_data =  add_binary_feature(full_data, 'INSPTYPE', 'InspectionStatus')
+#Incident Status
+full_data =  add_binary_feature(full_data, 'True_Incident', 'IncidentStatus')
+# Total Inspections
+full_data['Total_Inspections'] = full_data['INSPTYPE'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
+# Total Incidents
+full_data['Total_Incidents'] = full_data['Basic Incident Number (FD1)'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
+# Total Violations
+full_data['Total_Violations'] = full_data['VIOLATIONCode'].apply(lambda x: sum(1 for list_item in eval(x) if type(list_item)!=float) if type(x)!=float else 0)
+# Result Variable
+full_data = feat_recent(full_data, 'Result')
+# Building Codes
+feat_building_code(full_data)
+# Time Variables
+full_data = add_incident_inspection_time(full_data)

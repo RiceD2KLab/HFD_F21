@@ -4,7 +4,7 @@ from placekey.api import PlacekeyAPI
 import pandas as pd
 
 # placekey is a free API and you can get an API key by registering on the website
-PLACEKEY_API_KEY = 'PLACEKEY_API_KEY_HERE'
+PLACEKEY_API_KEY = "PLACEKEY_API_KEY_HERE"
 
 PLACEKEY_FIELD_NAME = 'PlaceKey ID'
 
