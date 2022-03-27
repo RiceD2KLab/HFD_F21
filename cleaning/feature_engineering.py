@@ -9,7 +9,7 @@ import math
 
 # BINARY VARIABLES
 
-full_data = pd.read_csv('full_merge_no_duplicates.csv')
+full_data = pd.read_csv('Full_Merged_Data_032622.csv')
 
 def add_binary_feature(data, col_name, feat):
     """
@@ -24,13 +24,18 @@ def add_binary_feature(data, col_name, feat):
 
     binaries = []
     empty_status = data[col_name].isnull()
+    main_col = data[col_name]
 
     for idx, val in empty_status.iteritems():
         if val == True:
             binaries.append(0)
         
         else:
-            binaries.append(1)
+            if main_col[idx] == 0:
+                binaries.append(0)
+            
+            else:
+                binaries.append(1)
     
     data[feat] = binaries 
 
@@ -186,6 +191,7 @@ def fire_spread_property_lost(df):
                         break
                 df.iat[i, df.columns.get_loc('Binary_Property_Lost')] = binary
     return df
+
 # JARRETT: TIME VARIABLES
 def add_incident_inspection_time(data):
     """
@@ -286,6 +292,8 @@ def add_incident_inspection_time(data):
 
 # Inspection Status
 full_data =  add_binary_feature(full_data, 'INSPTYPE', 'InspectionStatus')
+#Incident Status
+full_data =  add_binary_feature(full_data, 'True_Incident', 'IncidentStatus')
 # Total Inspections
 full_data['Total_Inspections'] = full_data['INSPTYPE'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
 # Total Incidents
