@@ -1,4 +1,5 @@
 import codecs
+from json.encoder import py_encode_basestring_ascii
 import pandas as pd
 from ast import literal_eval
 import numpy as np
@@ -12,7 +13,7 @@ from feature_engineering import hfd_incident_action_taken
 
 # BINARY VARIABLES
 
-full_data = pd.read_csv('Full_Merged_Data_032622.csv')
+full_data = pd.read_csv('/Users/tessacannon/Downloads/full_merge_no_duplicates.csv')
 
 
 def add_binary_feature(data, col_name, feat):
@@ -145,7 +146,7 @@ def feat_building_code(data):
 
 # YUXIN: TRUE INSPECTION VARIABLE
 
-def add_true_incident(file, feature):
+def add_true_incident(data, feature):
   """
   Given a file name and a feature name, add a new column showing the result of feature engineering.
 
@@ -154,7 +155,6 @@ def add_true_incident(file, feature):
 
   Return data with the new feature engineering output.
   """
-  data = pd.read_csv(file)
   col = data[feature]
   newcol = []
   for i in range(len(col)):
@@ -168,13 +168,8 @@ def add_true_incident(file, feature):
           count += 1
     newcol.append(count)
   data['True_Incident'] = newcol
-
-
-add_true_incident('Full_Merged_Data_TC_Houston.csv',
-                  'Basic Incident Type Code And Description (FD1.21)')
-
-
-# data.to_csv('Full_Merged_Data_YG_Houston.csv')
+  return data
+  
 
 # JOSH: PRIMARY ACTION TAKEN
 # Methods in freature_engineeering/hfd_incident_action_taken.py
@@ -314,8 +309,6 @@ def add_incident_inspection_time(data):
 
 # Inspection Status
 full_data = add_binary_feature(full_data, 'INSPTYPE', 'InspectionStatus')
-# Incident Status
-full_data = add_binary_feature(full_data, 'True_Incident', 'IncidentStatus')
 # Total Inspections
 full_data['Total_Inspections'] = full_data['INSPTYPE'].apply(
   lambda x: len(literal_eval(x)) if type(x) != float else 0)
@@ -331,12 +324,19 @@ full_data = feat_recent(full_data, 'Result')
 # Building Codes
 feat_building_code(full_data)
 # Time Variables
-full_data = add_incident_inspection_time(full_data)
-
+#full_data = add_incident_inspection_time(full_data)
+# Fire Spread Variables
+fire_spread_property_lost(full_data)
+# True Incident Status
+full_data = add_true_incident(full_data,'Basic Incident Type Code And Description (FD1.21)')
+# Incident Status
+#full_data = add_binary_feature(full_data, 'True_Incident', 'IncidentStatus')
 # Actions taken
 actions_taken_col = "Basic Primary Action Taken Code And Description (FD1.48)"
 full_data = fe.frequency_histogram_column_split(
   full_data, actions_taken_col,
-  fe.hfd_incident_action_taken.get_actions_taken_group)
+  hfd_incident_action_taken.get_actions_taken_group)
 
-# TODO: Final output here?
+# Final output
+
+pd.to_csv("/Users/tessacannon/Downloads/Full_Merged_Data.csv")
