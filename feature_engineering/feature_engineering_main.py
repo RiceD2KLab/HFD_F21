@@ -1,6 +1,10 @@
 import codecs
 from json.encoder import py_encode_basestring_ascii
+from typing import List
+
 import pandas as pd
+from pandas import Timestamp, NaT
+
 from ast import literal_eval
 import numpy as np
 from numpy import NaN, nan
@@ -9,11 +13,13 @@ from statistics import mode, mean
 import math
 
 import feature_engineering as fe
+from cleaning.data_wrangling import output_to_csv
 from feature_engineering import hfd_incident_action_taken
 
 # BINARY VARIABLES
 
-full_data = pd.read_csv('/Users/tessacannon/Downloads/full_merge_no_duplicates.csv')
+
+full_data = pd.read_csv('full_merge_no_duplicates.csv')
 
 
 def add_binary_feature(data, col_name, feat):
@@ -26,24 +32,24 @@ def add_binary_feature(data, col_name, feat):
 
   Returns data with feat added as a column. Row values in feat are either 0 or 1 based on if the column col_name is empty or not.
   """
-
+  
   binaries = []
   empty_status = data[col_name].isnull()
   main_col = data[col_name]
-
+  
   for idx, val in empty_status.iteritems():
     if val == True:
       binaries.append(0)
-
+    
     else:
       if main_col[idx] == 0:
         binaries.append(0)
-
+      
       else:
         binaries.append(1)
-
+  
   data[feat] = binaries
-
+  
   return data
 
 
@@ -73,20 +79,20 @@ def feat_recent(data, feature):
 
   Returns data with the row values of feature edited to be either the last entry of the list or NaN.
   """
-
+  
   results = data[feature]
   updated_results = []
-
+  
   for idx, val in results.iteritems():
     if type(val) == float:
       updated_results.append(val)
-
+    
     else:
       new_res = literal_eval(val)[-1]
       updated_results.append(new_res.replace(' ', ''))
-
+  
   data[feature] = updated_results
-
+  
   return data
 
 
@@ -99,7 +105,7 @@ def feat_building_code(data):
   property (row) based on the Basic Property Use Code And Description (FD1.46) column.
   """
   property_col = data.loc[:, 'Basic Property Use Code And Description (FD1.46)']
-
+  
   code_list = []
   for row in property_col:
     property_codes = []
@@ -115,7 +121,7 @@ def feat_building_code(data):
     else:
       code = 0
     code_list.append(code)
-
+  
   building_category = []
   for code in code_list:
     first_digit = int(str(code)[0])
@@ -140,7 +146,7 @@ def feat_building_code(data):
       building_category.append("Storage")
     elif first_digit == 9:
       building_category.append("Outside or Special Property")
-
+  
   data['Property_Code'] = building_category
 
 
@@ -169,7 +175,7 @@ def add_true_incident(data, feature):
     newcol.append(count)
   data['True_Incident'] = newcol
   return data
-  
+
 
 # JOSH: PRIMARY ACTION TAKEN
 # Methods in freature_engineeering/hfd_incident_action_taken.py
@@ -259,7 +265,7 @@ def add_incident_inspection_time(data):
   data["incidentTime_1yr"] = incidentTime_1yr
   data["incidentTime_2yr"] = incidentTime_2yr
   data["incidentTime_5yr"] = incidentTime_5yr
-
+  
   # Adding inspection features
   inspectTime_col = data.loc[:, 'Processed / Last Inspected']
   inspectTime_1yr = []
@@ -269,7 +275,9 @@ def add_incident_inspection_time(data):
     if type(row) != float:
       dummyValue = pd.to_datetime(946684800, unit='s')
       dummyValue_init = dummyValue
-      for item in literal_eval(row):
+      
+      ts_list: List[pd.Timestamp] = eval(row)
+      for item in ts_list:
         item_time = pd.to_datetime(item, format='%m/%d/%Y %H:%M')
         if item_time >= dummyValue:
           dummyValue = item_time
@@ -303,40 +311,43 @@ def add_incident_inspection_time(data):
   data["inspectTime_1yr"] = inspectTime_1yr
   data["inspectTime_2yr"] = inspectTime_2yr
   data["inspectTime_5yr"] = inspectTime_5yr
-
+  
   return data
 
 
-# Inspection Status
-full_data = add_binary_feature(full_data, 'INSPTYPE', 'InspectionStatus')
-# Total Inspections
-full_data['Total_Inspections'] = full_data['INSPTYPE'].apply(
-  lambda x: len(literal_eval(x)) if type(x) != float else 0)
-# Total Incidents
-full_data['Total_Incidents'] = full_data['Basic Incident Number (FD1)'].apply(
-  lambda x: len(literal_eval(x)) if type(x) != float else 0)
-# Total Violations
-full_data['Total_Violations'] = full_data['VIOLATIONCode'].apply(
-  lambda x: sum(1 for list_item in eval(x) if type(list_item) != float) if type(
-    x) != float else 0)
-# Result Variable
-full_data = feat_recent(full_data, 'Result')
-# Building Codes
-feat_building_code(full_data)
-# Time Variables
-#full_data = add_incident_inspection_time(full_data)
-# Fire Spread Variables
-fire_spread_property_lost(full_data)
-# True Incident Status
-full_data = add_true_incident(full_data,'Basic Incident Type Code And Description (FD1.21)')
-# Incident Status
-#full_data = add_binary_feature(full_data, 'True_Incident', 'IncidentStatus')
-# Actions taken
-actions_taken_col = "Basic Primary Action Taken Code And Description (FD1.48)"
-full_data = fe.frequency_histogram_column_split(
-  full_data, actions_taken_col,
-  hfd_incident_action_taken.get_actions_taken_group)
-
-# Final output
-
-pd.to_csv("/Users/tessacannon/Downloads/Full_Merged_Data.csv")
+if __name__ == "__main__":
+  # Inspection Status
+  full_data = add_binary_feature(full_data, 'INSPTYPE', 'InspectionStatus')
+  # Total Inspections
+  full_data['Total_Inspections'] = full_data['INSPTYPE'].apply(
+    lambda x: len(literal_eval(x)) if type(x) != float else 0)
+  # Total Incidents
+  full_data['Total_Incidents'] = full_data['Basic Incident Number (FD1)'].apply(
+    lambda x: len(literal_eval(x)) if type(x) != float else 0)
+  # Total Violations
+  full_data['Total_Violations'] = full_data['VIOLATIONCode'].apply(
+    lambda x: sum(
+      1 for list_item in eval(x) if type(list_item) != float) if type(
+      x) != float else 0)
+  # Result Variable
+  full_data = feat_recent(full_data, 'Result')
+  # Building Codes
+  feat_building_code(full_data)
+  # Time Variables
+  full_data = add_incident_inspection_time(full_data)
+  # Fire Spread Variables
+  fire_spread_property_lost(full_data)
+  # True Incident Status
+  full_data = add_true_incident(
+    full_data,
+    'Basic Incident Type Code And Description (FD1.21)')
+  # Incident Status
+  full_data = add_binary_feature(full_data, 'True_Incident', 'IncidentStatus')
+  # Actions taken
+  actions_taken_col = "Basic Primary Action Taken Code And Description (FD1.48)"
+  full_data = fe.frequency_histogram_column_split(
+    full_data, actions_taken_col,
+    hfd_incident_action_taken.get_actions_taken_group)
+  
+  # Final output
+  output_to_csv(full_data, "Full_Merged_Data")
