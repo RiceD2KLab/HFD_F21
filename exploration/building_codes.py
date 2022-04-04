@@ -1,30 +1,27 @@
 import pandas as pd
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import plotly.express as px
 import seaborn as sns
 
-data = pd.read_csv("Full_Merged_Data_TC_Houston.csv")
+data = pd.read_csv('Working_Data_040322.csv')
 
 #Plot 1
 
-data_grouped = data.groupby('Property_Code').count().reset_index()
-data_grouped = data_grouped.sort_values(by='Unnamed: 0',ascending=False)
+data_grouped = data.groupby('Property_Code',as_index=False).size()
+data_grouped = data_grouped.sort_values(by='size',ascending=False)
 
+fig = sns.barplot(y='Property_Code',x='size',data=data_grouped)
+fig.set(ylabel="Property Type",
+            xlabel='Number of Properties',
+            title="Number of Properties by INFOR Building Types")
 
-fig = px.bar(data_grouped, x='Property_Code', y='Unnamed: 0',
-title="Number of Properties by INFOR Building Types",
-            labels={"Property_Code":"Property Type",
-            "Unnamed: 0":"Number of Buildings"})
+#Plot 2
 
-#fig.show()
-
-#Plot 2 
-
-data_grouped.drop(data_grouped[data_grouped['Property_Code'] == "Unknown"].index, inplace=True)
-
-fig = px.bar(data_grouped, x='Property_Code', y='Unnamed: 0',
-title="Number of Properties by INFOR Building Types",
-            labels={"Property_Code":"Property Type",
-            "Unnamed: 0":"Number of Buildings"})
-
-#fig.show()
+data_grouped = data.groupby(['Property_Code','InspectionStatus']).size().reset_index().pivot(columns='InspectionStatus', index='Property_Code', values=0)
+print(data_grouped)
+data_grouped.plot(kind='bar', stacked=True)
+plt.xlabel("Property Type")
+plt.ylabel("Number of Properties")
+plt.legend(labels=['Inspected Since 2005','Not Inspected Since 2005'])
+plt.title("Number of Properties by INFOR Building Types and Inspection Status")
+plt.show()
