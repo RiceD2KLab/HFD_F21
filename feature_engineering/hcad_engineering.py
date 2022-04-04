@@ -116,8 +116,34 @@ def update_property_code(data):
 #update_property_code(data)
 #data.to_csv('Working_Data_040322.csv', index=0)
 
+# buildingCondition Variable
+# Transforming dscr variable with a numerical description of building quality
+# Numbers were assigned as follows: Very Low = 1, Low = 2, Average = 3, Good = 4, Excellent = 5
+# For properties with multiple descriptors, the lowest/worst descriptor was used
+# For properties with no descriptors, they were assigned Average = 3
+
+# data = pd.read_csv('Working_Data_040322.csv',low_memory=False)
 
 
+dscr_col = data.loc[:, 'dscr']
+buildingCondition=[]
+for row in dscr_col:
+    if type(row) == float:
+        dscr_val = 3
+    elif row.find('Very Low') >= 0:
+        dscr_val = 1
+    elif row.find('Low') >= 0:
+        dscr_val = 2
+    elif row.find('Average') >= 0:
+        dscr_val = 3
+    elif row.find('Good') >= 0:
+        dscr_val = 4
+    elif row.find('Excellent') >= 0:
+        dscr_val = 5
+    else:
+        dscr_val = 3
+    buildingCondition.append(dscr_val)
+data["buildingCondition"] = buildingCondition
 
 
 
