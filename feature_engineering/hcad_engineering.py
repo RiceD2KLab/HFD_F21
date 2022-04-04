@@ -1,5 +1,6 @@
 
 from ast import literal_eval
+from datetime import date
 import numpy as np
 import pandas as pd
 from numpy import NaN, nan
@@ -144,6 +145,21 @@ for row in dscr_col:
         dscr_val = 3
     buildingCondition.append(dscr_val)
 data["buildingCondition"] = buildingCondition
+
+### DATE ERECTED
+df = pd.read_csv("/Users/antata/Downloads/Working_Data_YG_040422.csv",index_col=0)
+df = df.iloc[:,1:] 
+
+def date_erected(df):
+    for i, row in df.iterrows():
+        print(i, row['date_erected'])
+        if type(row['date_erected'])!=float:
+            dates = eval(row['date_erected'])
+            dates.sort()
+            df.iat[i, df.columns.get_loc('date_erected')] = dates[0]
+    return df
+date_erected(df).to_csv("Working_Data_AC_040422.csv", index=0)
+
 
 
 
