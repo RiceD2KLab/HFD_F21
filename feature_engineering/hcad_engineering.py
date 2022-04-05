@@ -8,10 +8,7 @@ import re
 from statistics import mode, mean
 import math
 
-"""
-from feature_engineering.feature_engineering_main import add_binary_feature
-
-data = pd.read_csv('Full_Merged_Data.csv')
+#data = pd.read_csv('Working_Data_JW_040422.csv')
 
 new_data = data[['bld_num', 'impr_mdl_cd', 'dscr', 'date_erected', 'yr_remodel', 'act_ar', 'tot_inc', 'tot_appr_val', 'bld_ar', 'land_ar', 
 'STADDRESS_x', 'PlaceKey ID', 'Result', 'InspectionStatus', 'Total_Inspections', 'Total_Incidents', 'Total_Violations', 'Property_Code', 
@@ -71,9 +68,41 @@ for idx, val in remodel.iteritems():
 new_data['RemodelStatus'] = remodeled
 new_data = new_data.drop(['yr_remodel'], axis=1)
 
-#new_data.to_csv('Working_Data_033022.csv', index=0)
+#Numbers to Categories
 
-"""
+build_num = data['BuildingQuantity']
+remod = data['RemodelStatus']
+
+build_new = []
+remod_new = []
+
+#buildings
+for idx, val in build_num.iteritems():
+    if val == 0:
+        build_new.append('Unknown')
+    
+    elif val == 1:
+        build_new.append('Single Building')
+    
+    elif val == 2:
+        build_new.append('Multi-Building')
+
+data['BuildingQuantity'] = build_new
+
+#remodelling
+for idx, val in remod.iteritems():
+    if val == 0:
+        remod_new.append('Unknown')
+    
+    elif val == 1:
+        remod_new.append('Not Remodeled')
+    
+    elif val == 2:
+        remod_new.append('Remodeled')
+
+data['RemodelStatus'] = remod_new
+
+#data.to_csv('Working_Data_040422.csv', index=0)
 
 # Updating Property_Code Variable to include HCAD data
 
@@ -159,18 +188,4 @@ def date_erected(df):
             df.iat[i, df.columns.get_loc('date_erected')] = dates[0]
     return df
 date_erected(df).to_csv("Working_Data_AC_040422.csv", index=0)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
