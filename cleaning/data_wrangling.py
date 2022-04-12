@@ -138,6 +138,18 @@ def filter_null(dataset: pd.DataFrame, col_names: List[str]) -> pd.DataFrame:
   return dataset.drop(idxs_to_drop)
 
 
+def trim_string_fields(dataset: pd.DataFrame) -> pd.DataFrame:
+  """
+  Trims whitespace off the beginning and end of any string fields in a DataFrame.
+  Args:
+    dataset: DataFrame to be trimmed
+
+  Returns:
+    the trimmed DataFrame
+  """
+  return dataset.applymap(lambda x: (x.strip() if isinstance(x, str) else x))
+
+
 def output_to_excel(dataframe: pd.DataFrame, filename: str) -> None:
   """
   Converts a Pandas DataFrame into an Excel spreadsheet.
