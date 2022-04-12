@@ -76,10 +76,10 @@ def compile_datasets(datasets: List[pd.DataFrame],
   if filter_cols is None:
     filter_cols = []
 
-  for violation in datasets:
+  for dataset in datasets:
     for drop_col in filter_cols:
-      if drop_col in violation:
-        violation.drop(drop_col, axis=1, inplace=True)
+      if drop_col in dataset:
+        dataset.drop(drop_col, axis=1, inplace=True)
 
   return pd.concat(datasets)
 
@@ -102,7 +102,7 @@ def stack_datasets(stack_dir: str, extension: str = "*") -> pd.DataFrame:
 def filter_rows(dataset: pd.DataFrame,
                 unwanted_values: Dict) -> pd.DataFrame:
   """
-  Given a dataset, drop rows that have unwanted values in specified comments.
+  Given a dataset, drop rows that have unwanted values in specified columns.
   :param dataset: DataFrame from which to filter matching rows
   :param unwanted_values: Columns and corresponding sets of values to ignore
   :return: A DataFrame with the unwanted rows filtered out.
@@ -150,28 +150,28 @@ def trim_string_fields(dataset: pd.DataFrame) -> pd.DataFrame:
   return dataset.applymap(lambda x: (x.strip() if isinstance(x, str) else x))
 
 
-def output_to_excel(dataframe: pd.DataFrame, filename: str) -> None:
+def output_to_excel(dataframe: pd.DataFrame, filename: str, keep_index=True) -> None:
   """
   Converts a Pandas DataFrame into an Excel spreadsheet.
   :param dataframe: DataFrame to be converted
-  :param filename: name of file to save
+  :param filename: name of file to save, without extension
   :return: None
   """
   base, extension = os.path.splitext(filename)
   if extension != ".xlsx":
     filename = base + ".xlsx"
-  dataframe.to_excel(filename, encoding="utf-8", index=False)
+  dataframe.to_excel(filename, encoding="utf-8", index=keep_index)
 
 
-def output_to_csv(dataframe: pd.DataFrame, filename: str) -> None:
+def output_to_csv(dataframe: pd.DataFrame, filename: str, keep_index=True) -> None:
   """
   Converts a Pandas DataFrame into a CSV file.
   :param dataframe: DataFrame to be converted
-  :param filename: name of file to save
+  :param filename: name of file to save, without an extension
   :return: None
   """
   base, extension = os.path.splitext(filename)
   if extension != ".csv":
     filename = base + ".csv"
 
-  dataframe.to_csv(filename, encoding="utf-8", index=False)
+  dataframe.to_csv(filename, encoding="utf-8", index=keep_index)
