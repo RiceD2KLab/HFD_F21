@@ -6,7 +6,6 @@ from numpy import NaN, nan
 from typing import Callable
 
 
-
 def frequency_histogram_column(data: pd.DataFrame, column: str,
                                concat_column: str = None) -> pd.DataFrame:
   """
@@ -79,4 +78,24 @@ def frequency_histogram_column_split(
   for k, v in added_cols.items():
     data[k] = v
 
+  return data
+
+
+def sum_data_column_list(data: pd.DataFrame, col: str, out_col: str = None):
+  col_sums = []
+
+  if out_col is None:
+    out_col = col + "_summed"
+
+  for row in data[col]:
+    if type(row) == float:
+      if row == nan:
+        col_sums.append(0)
+      else:
+        col_sums.append(row)
+    else:
+      elems = eval(str(row))
+      col_sums.append(sum(elems))
+
+  data[out_col] = col_sums
   return data
