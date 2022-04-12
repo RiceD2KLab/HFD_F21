@@ -49,7 +49,7 @@ remodelStatus_data = pd.get_dummies(model_data['RemodelStatus'],drop_first=True)
 model_data = pd.concat([model_data, buildingQuantity_data, remodelStatus_data, property_code_data], axis = 1)
 
 #Drop unnecessary columns
-model_data = model_data.drop(['STADDRESS_x','PlaceKey ID', 'impr_mdl_cd', 'Property_Code', 'BuildingQuantity', 'RemodelStatus'], axis = 1)
+model_data = model_data.drop(['STADDRESS_x', 'impr_mdl_cd', 'Property_Code', 'BuildingQuantity', 'RemodelStatus'], axis = 1)
 
 #Export
 model_data.to_csv('Modeling_Data_04102022.csv', index=0)
