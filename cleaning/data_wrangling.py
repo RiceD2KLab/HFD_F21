@@ -150,7 +150,8 @@ def trim_string_fields(dataset: pd.DataFrame) -> pd.DataFrame:
   return dataset.applymap(lambda x: (x.strip() if isinstance(x, str) else x))
 
 
-def output_to_excel(dataframe: pd.DataFrame, filename: str, keep_index=True) -> None:
+def output_to_excel(dataframe: pd.DataFrame, filename: str,
+                    keep_index=True) -> None:
   """
   Converts a Pandas DataFrame into an Excel spreadsheet.
   :param dataframe: DataFrame to be converted
@@ -163,7 +164,8 @@ def output_to_excel(dataframe: pd.DataFrame, filename: str, keep_index=True) -> 
   dataframe.to_excel(filename, encoding="utf-8", index=keep_index)
 
 
-def output_to_csv(dataframe: pd.DataFrame, filename: str, keep_index=True) -> None:
+def output_to_csv(dataframe: pd.DataFrame, filename: str,
+                  keep_index=True) -> None:
   """
   Converts a Pandas DataFrame into a CSV file.
   :param dataframe: DataFrame to be converted
@@ -175,3 +177,18 @@ def output_to_csv(dataframe: pd.DataFrame, filename: str, keep_index=True) -> No
     filename = base + ".csv"
 
   dataframe.to_csv(filename, encoding="utf-8", index=keep_index)
+
+
+def output_to_pkl(dataframe: pd.DataFrame, filename: str,
+                  keep_index=True) -> None:
+  """
+  Exports a Pandas DataFrame into a Pickle file.
+  Args:
+    dataframe: DataFrame to be converted
+    filename: name of the output file, without an extension
+  """
+  base, extension = os.path.splitext(filename)
+  if extension != ".pkl":
+    filename = base + ".pkl"
+
+  dataframe.to_pickle(filename, encoding="utf-8", index=keep_index)
