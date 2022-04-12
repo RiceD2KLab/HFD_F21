@@ -17,6 +17,7 @@ from cleaning.data_wrangling import output_to_csv
 from feature_engineering import hfd_incident_action_taken
 
 
+
 # TOTAL COUNT COLUMNS
 
 # Create Column of Total Number of Inspections
@@ -187,93 +188,121 @@ def add_incident_inspection_time(data):
   incidentTime_col = data.loc[:, 'Basic Incident Date Time']
   incidentTime_1yr = []
   incidentTime_2yr = []
-  incidentTime_5yr = []
+  incidentTime_3yr = []
+  incidentTime_4yr = []
   for row in incidentTime_col:
     if type(row) != float:
-      dummyValue = pd.to_datetime(946684800, unit='s')
-      dummyValue_init = dummyValue
+      dummyValue1 = pd.to_datetime(946684800, unit='s')
+      dummyValue2 = pd.to_datetime(946684800, unit='s')
+      dummyValue3 = pd.to_datetime(946684800, unit='s')
+      dummyValue4 = pd.to_datetime(946684800, unit='s')
       for item in literal_eval(row):
         if len(item.split("/")[2].split(" ")[0]) == 2:
           item_time = pd.to_datetime(item, format='%m/%d/%y %H:%M')
         if len(item.split("/")[2].split(" ")[0]) == 4:
           item_time = pd.to_datetime(item, format='%m/%d/%Y %H:%M')
-        if item_time >= dummyValue:
-          dummyValue = item_time
-      if dummyValue != dummyValue_init:
-        if dummyValue > pd.to_datetime(1609459200,
-                                       unit='s'):  # if most recent date is after Jan. 1, 2021
-          code_1yr = 1
-        else:
-          code_1yr = 0
-        if dummyValue > pd.to_datetime(1577836800,
-                                       unit='s'):  # if most recent date is after Jan. 1, 2020
-          code_2yr = 1
-        else:
-          code_2yr = 0
-        if dummyValue > pd.to_datetime(1483228800,
-                                       unit='s'):  # if most recent date is after Jan. 1, 2017
-          code_5yr = 1
-        else:
-          code_5yr = 0
+        if item_time >= dummyValue1:
+          dummyValue1 = item_time
+        if item_time >= dummyValue2 and item_time <= pd.to_datetime(1609480800, unit='s'):
+          dummyValue2 = item_time
+        if item_time >= dummyValue3 and item_time <= pd.to_datetime(1577858400, unit='s'):
+          dummyValue3 = item_time
+        if item_time >= dummyValue4 and item_time <= pd.to_datetime(1546322400, unit='s'):
+          dummyValue4 = item_time
+      if dummyValue1 > pd.to_datetime(1609480800, unit='s'):
+        code_1yr = 1
       else:
         code_1yr = 0
+      if dummyValue2 > pd.to_datetime(1577858400, unit='s'):
+        code_2yr = 1
+      else:
         code_2yr = 0
-        code_5yr = 0
+      if dummyValue3 > pd.to_datetime(1546322400, unit='s'):
+        code_3yr = 1
+      else:
+        code_3yr = 0
+      if dummyValue4 > pd.to_datetime(1514786400, unit='s'):
+        code_4yr = 1
+      else:
+        code_4yr = 0
     else:
       code_1yr = 0
       code_2yr = 0
-      code_5yr = 0
+      code_3yr = 0
+      code_4yr = 0
     incidentTime_1yr.append(code_1yr)
     incidentTime_2yr.append(code_2yr)
-    incidentTime_5yr.append(code_5yr)
+    incidentTime_3yr.append(code_3yr)
+    incidentTime_4yr.append(code_4yr)
   data["incidentTime_1yr"] = incidentTime_1yr
   data["incidentTime_2yr"] = incidentTime_2yr
-  data["incidentTime_5yr"] = incidentTime_5yr
+  data["incidentTime_3yr"] = incidentTime_3yr
+  data["incidentTime_4yr"] = incidentTime_4yr
 
   # Adding inspection features
   inspectTime_col = data.loc[:, 'Processed / Last Inspected']
   inspectTime_1yr = []
   inspectTime_2yr = []
+  inspectTime_3yr = []
+  inspectTime_4yr = []
   inspectTime_5yr = []
   for row in inspectTime_col:
     if type(row) != float:
-      dummyValue = pd.to_datetime(946684800, unit='s')
-      dummyValue_init = dummyValue
-
-      ts_list: List[pd.Timestamp] = eval(row)
-      for item in ts_list:
-        item_time = pd.to_datetime(item, format='%m/%d/%Y %H:%M')
-        if item_time >= dummyValue:
-          dummyValue = item_time
-      if dummyValue != dummyValue_init:
-        if dummyValue > pd.to_datetime(1609459200,
-                                       unit='s'):  # if most recent date is after Jan. 1, 2021
-          code_1yr = 1
-        else:
-          code_1yr = 0
-        if dummyValue > pd.to_datetime(1577836800,
-                                       unit='s'):  # if most recent date is after Jan. 1, 2020
-          code_2yr = 1
-        else:
-          code_2yr = 0
-        if dummyValue > pd.to_datetime(1483228800,
-                                       unit='s'):  # if most recent date is after Jan. 1, 2017
-          code_5yr = 1
-        else:
-          code_5yr = 0
+      dummyValue1 = pd.to_datetime(946684800, unit='s')
+      dummyValue2 = pd.to_datetime(946684800, unit='s')
+      dummyValue3 = pd.to_datetime(946684800, unit='s')
+      dummyValue4 = pd.to_datetime(946684800, unit='s')
+      dummyValue5 = pd.to_datetime(946684800, unit='s')
+      for item in literal_eval(row):
+        if len(item.split("/")[2].split(" ")[0]) == 2:
+          item_time = pd.to_datetime(item, format='%m/%d/%y %H:%M')
+        if len(item.split("/")[2].split(" ")[0]) == 4:
+          item_time = pd.to_datetime(item, format='%m/%d/%Y %H:%M')
+        if item_time >= dummyValue1:
+          dummyValue1 = item_time
+        if item_time >= dummyValue2 and item_time <= pd.to_datetime(1609480800, unit='s'):
+          dummyValue2 = item_time
+        if item_time >= dummyValue3 and item_time <= pd.to_datetime(1577858400, unit='s'):
+          dummyValue3 = item_time
+        if item_time >= dummyValue4 and item_time <= pd.to_datetime(1546322400, unit='s'):
+          dummyValue4 = item_time
+        if item_time >= dummyValue5 and item_time <= pd.to_datetime(1514786400, unit='s'):
+          dummyValue5 = item_time
+      if dummyValue1 > pd.to_datetime(1609480800, unit='s'):
+        code_1yr = 1
       else:
         code_1yr = 0
+      if dummyValue2 > pd.to_datetime(1577858400, unit='s'):
+        code_2yr = 1
+      else:
         code_2yr = 0
+      if dummyValue3 > pd.to_datetime(1546322400, unit='s'):
+        code_3yr = 1
+      else:
+        code_3yr = 0
+      if dummyValue4 > pd.to_datetime(1514786400, unit='s'):
+        code_4yr = 1
+      else:
+        code_4yr = 0
+      if dummyValue5 > pd.to_datetime(1483250400, unit='s'):
+        code_5yr = 1
+      else:
         code_5yr = 0
     else:
       code_1yr = 0
       code_2yr = 0
+      code_3yr = 0
+      code_4yr = 0
       code_5yr = 0
     inspectTime_1yr.append(code_1yr)
     inspectTime_2yr.append(code_2yr)
+    inspectTime_3yr.append(code_3yr)
+    inspectTime_4yr.append(code_4yr)
     inspectTime_5yr.append(code_5yr)
   data["inspectTime_1yr"] = inspectTime_1yr
   data["inspectTime_2yr"] = inspectTime_2yr
+  data["inspectTime_3yr"] = inspectTime_3yr
+  data["inspectTime_4yr"] = inspectTime_4yr
   data["inspectTime_5yr"] = inspectTime_5yr
 
   return data

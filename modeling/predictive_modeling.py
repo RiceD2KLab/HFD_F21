@@ -36,5 +36,20 @@ model_data = data.drop(rows_to_drop, axis=0)
 #Drop remaining features with 10,000< unpopulated rows
 model_data = model_data.drop(['Result', 'Fire_Spread_Mean', 'Binary_Property_Lost'], axis=1)
 
+model_data = pd.read_csv('Modeling_Data_04052022.csv')
+
+#Fill remaining null values
+model_data = model_data.fillna(0)
+
+#Get dummy variables for categorical variables
+property_code_data = pd.get_dummies(model_data['Property_Code'], drop_first = True)
+buildingQuantity_data = pd.get_dummies(model_data['BuildingQuantity'],drop_first=True)
+remodelStatus_data = pd.get_dummies(model_data['RemodelStatus'],drop_first=True)
+
+model_data = pd.concat([model_data, buildingQuantity_data, remodelStatus_data, property_code_data], axis = 1)
+
+#Drop unnecessary columns
+model_data = model_data.drop(['STADDRESS_x','PlaceKey ID', 'impr_mdl_cd', 'Property_Code', 'BuildingQuantity', 'RemodelStatus'], axis = 1)
+
 #Export
-model_data.to_csv('Modeling_Data_04052022.csv', index=0)
+model_data.to_csv('Modeling_Data_04102022.csv', index=0)
