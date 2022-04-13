@@ -97,19 +97,17 @@ if __name__ == "__main__":
   # Filter irrelevant rows
   merged_data = merged_data[
     ['bld_num', 'impr_mdl_cd', 'dscr', 'date_erected', 'yr_remodel', 'act_ar',
-     'tot_inc', 'tot_appr_val', 'bld_ar', 'land_ar',
-     'STADDRESS_x', 'PlaceKey ID', 'Result', 'InspectionStatus',
-     'Total_Inspections', 'Total_Incidents', 'Total_Violations',
-     'Property_Code',
-     'incidentTime_1yr', 'incidentTime_2yr', 'incidentTime_5yr',
-     'inspectTime_1yr', 'inspectTime_2yr', 'inspectTime_5yr',
-     'Fire_Spread_Mean',
+     'tot_inc', 'tot_appr_val', 'bld_ar', 'land_ar', 'STADDRESS_x',
+     'PlaceKey ID', 'Result', 'InspectionStatus', 'Total_Inspections',
+     'Total_Incidents', 'Total_Violations', 'Property_Code', 'incidentTime_1yr',
+     'incidentTime_2yr', 'incidentTime_3yr', 'incidentTime_4yr',
+     'inspectTime_1yr', 'inspectTime_2yr', 'incidentTime_3yr',
+     'incidentTime_4yr', 'inspectTime_5yr', 'Fire_Spread_Mean',
      'Binary_Property_Lost', 'True_Incident', 'IncidentStatus',
      'Action Taken: Hazardous Condition', 'Action Taken: Investigation',
-     'Action Taken: EMS and Transport',
-     'Action Taken: Assistance', 'Action Taken: FireControl',
-     'Action Taken: Search & Rescue', 'Action Taken: Fire Rescues',
-     'Action Taken: Fill-in, Standby',
+     'Action Taken: EMS and Transport', 'Action Taken: Assistance',
+     'Action Taken: FireControl', 'Action Taken: Search & Rescue',
+     'Action Taken: Fire Rescues', 'Action Taken: Fill-in, Standby',
      'Action Taken: None', 'Action Taken: Services']]
 
   # Building Quantity feature engineering
@@ -165,7 +163,7 @@ if __name__ == "__main__":
   for category, code_list in hcad_property_dict.items():
     for x in code_list:
       hcad_property_dict_inv.setdefault(str(x), []).append(category)
-  update_property_code(merged_data)
+  update_property_code(merged_data, hcad_property_dict_inv)
 
   # buildingCondition Variable
   # Transforming dscr variable with a numerical description of building quality

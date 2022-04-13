@@ -1,6 +1,6 @@
 import codecs
 from json.encoder import py_encode_basestring_ascii
-from typing import List
+from typing import List, Iterable
 
 import pandas as pd
 from pandas import Timestamp, NaT
@@ -16,6 +16,7 @@ import feature_engineering as fe
 from cleaning.data_wrangling import output_to_csv
 from feature_engineering import hfd_incident_action_taken
 
+JAN_01_00 = 946684800
 
 
 # TOTAL COUNT COLUMNS
@@ -192,22 +193,25 @@ def add_incident_inspection_time(data):
   incidentTime_4yr = []
   for row in incidentTime_col:
     if type(row) != float:
-      dummyValue1 = pd.to_datetime(946684800, unit='s')
-      dummyValue2 = pd.to_datetime(946684800, unit='s')
-      dummyValue3 = pd.to_datetime(946684800, unit='s')
-      dummyValue4 = pd.to_datetime(946684800, unit='s')
-      for item in literal_eval(row):
+      dummyValue1 = pd.to_datetime(JAN_01_00, unit='s')
+      dummyValue2 = pd.to_datetime(JAN_01_00, unit='s')
+      dummyValue3 = pd.to_datetime(JAN_01_00, unit='s')
+      dummyValue4 = pd.to_datetime(JAN_01_00, unit='s')
+      for item in eval(row):
         if len(item.split("/")[2].split(" ")[0]) == 2:
           item_time = pd.to_datetime(item, format='%m/%d/%y %H:%M')
         if len(item.split("/")[2].split(" ")[0]) == 4:
           item_time = pd.to_datetime(item, format='%m/%d/%Y %H:%M')
         if item_time >= dummyValue1:
           dummyValue1 = item_time
-        if item_time >= dummyValue2 and item_time <= pd.to_datetime(1609480800, unit='s'):
+        if item_time >= dummyValue2 and item_time <= pd.to_datetime(1609480800,
+                                                                    unit='s'):
           dummyValue2 = item_time
-        if item_time >= dummyValue3 and item_time <= pd.to_datetime(1577858400, unit='s'):
+        if item_time >= dummyValue3 and item_time <= pd.to_datetime(1577858400,
+                                                                    unit='s'):
           dummyValue3 = item_time
-        if item_time >= dummyValue4 and item_time <= pd.to_datetime(1546322400, unit='s'):
+        if item_time >= dummyValue4 and item_time <= pd.to_datetime(1546322400,
+                                                                    unit='s'):
           dummyValue4 = item_time
       if dummyValue1 > pd.to_datetime(1609480800, unit='s'):
         code_1yr = 1
@@ -253,20 +257,27 @@ def add_incident_inspection_time(data):
       dummyValue3 = pd.to_datetime(946684800, unit='s')
       dummyValue4 = pd.to_datetime(946684800, unit='s')
       dummyValue5 = pd.to_datetime(946684800, unit='s')
-      for item in literal_eval(row):
-        if len(item.split("/")[2].split(" ")[0]) == 2:
+      for item in eval(row):
+        if isinstance(item, float):
+          if np.isnan(item):
+            item_time = pd.to_datetime(0, unit='s')
+        elif len(item.split("/")[2].split(" ")[0]) == 2:
           item_time = pd.to_datetime(item, format='%m/%d/%y %H:%M')
-        if len(item.split("/")[2].split(" ")[0]) == 4:
+        elif len(item.split("/")[2].split(" ")[0]) == 4:
           item_time = pd.to_datetime(item, format='%m/%d/%Y %H:%M')
         if item_time >= dummyValue1:
           dummyValue1 = item_time
-        if item_time >= dummyValue2 and item_time <= pd.to_datetime(1609480800, unit='s'):
+        if item_time >= dummyValue2 and item_time <= pd.to_datetime(1609480800,
+                                                                    unit='s'):
           dummyValue2 = item_time
-        if item_time >= dummyValue3 and item_time <= pd.to_datetime(1577858400, unit='s'):
+        if item_time >= dummyValue3 and item_time <= pd.to_datetime(1577858400,
+                                                                    unit='s'):
           dummyValue3 = item_time
-        if item_time >= dummyValue4 and item_time <= pd.to_datetime(1546322400, unit='s'):
+        if item_time >= dummyValue4 and item_time <= pd.to_datetime(1546322400,
+                                                                    unit='s'):
           dummyValue4 = item_time
-        if item_time >= dummyValue5 and item_time <= pd.to_datetime(1514786400, unit='s'):
+        if item_time >= dummyValue5 and item_time <= pd.to_datetime(1514786400,
+                                                                    unit='s'):
           dummyValue5 = item_time
       if dummyValue1 > pd.to_datetime(1609480800, unit='s'):
         code_1yr = 1
@@ -338,7 +349,7 @@ if __name__ == "__main__":
   full_data = add_incident_inspection_time(full_data)
 
   # Fire Spread Variables
-  fire_spread_property_lost(full_data)
+  full_data = fire_spread_property_lost(full_data)
 
   # True Incident Status
   full_data = add_true_incident(

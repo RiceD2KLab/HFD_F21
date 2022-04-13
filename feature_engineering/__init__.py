@@ -3,7 +3,7 @@ from ast import literal_eval
 import pandas as pd
 from collections import defaultdict
 from numpy import NaN, nan
-from typing import Callable
+from typing import Callable, Iterable
 
 
 def frequency_histogram_column(data: pd.DataFrame, column: str,
@@ -100,6 +100,7 @@ def sum_data_column_list(data: pd.DataFrame, col: str, out_col: str = None):
   data[out_col] = col_sums
   return data
 
+
 def add_binary_feature(data, col_name, feat):
   """
   Given a column from a dataframe, create a binary feature based on whether or not each row in the column is empty.
@@ -129,3 +130,22 @@ def add_binary_feature(data, col_name, feat):
   data[feat] = binaries
 
   return data
+
+
+def engineer_time_data(data: pd.DataFrame, col: str, cutoffs: Iterable[int],
+                       base_time: int) -> pd.DataFrame:
+  """
+
+  :param data:
+  :param col:
+  :param cutoffs:
+  :param base_time:
+  :return:
+  """
+
+  # Sort the year brackets to use
+  within = list(sorted(set(cutoffs)))
+
+  incident_time_col = data["Basic Incident Date Time"]
+
+  raise NotImplementedError
