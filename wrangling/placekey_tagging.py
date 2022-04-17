@@ -33,16 +33,43 @@ def gen_placekey_from_address(data: pd.DataFrame,
   places = []
   for i, row in data.iterrows():
     address = row[address_column_name]
-    address = address.split(" ")
+    split_addr = address.split(" ")
     # fills in the dictionary with corresponding street, city, region, zip, country
     # we are assuming the street address has the format: [STREET] [CITY] [STATE] [ZIP]
-    places.append({"query_id": str(i), "street_address": ' '.join(address[:-3]),
-                   "city": address[-3], "region": address[-2],
-                   "postal_code": address[-1], "iso_country_code": "US"})
+    try:
+      try:
+        # Attempt to parse out any suite numbers to generate extra placekeys
+        ste_num = int(split_addr[-4])
+        places.append(
+          {"query_id": str(i),
+           "street_address": ' '.join(split_addr[:-4]) + f" #{ste_num}",
+           "city": split_addr[-3], "region": split_addr[-2],
+           "postal_code": split_addr[-1], "iso_country_code": "US"})
+      except ValueError:
+        places.append(
+          {"query_id": str(i), "street_address": ' '.join(split_addr[:-3]),
+           "city": split_addr[-3], "region": split_addr[-2],
+           "postal_code": split_addr[-1], "iso_country_code": "US"})
+    except IndexError:
+      print(
+        f"Malformed address field '{address}' in row {i}. Generating empty PlaceKey query.")
+      empty_query = {key: "" for key in
+                     ["street_address", "city", "region", "postal_code"]}
+      empty_query["iso_country_code"] = "US"
+      empty_query["query_id"] = str(i)
+      places.append(empty_query)
+
   # performs lookup by batch
   pk_api = PlacekeyAPI(PLACEKEY_API_KEY)
   placekeys = pk_api.lookup_placekeys(places)
   placekey_col = []
+
+  # Try to catch situations when the retrieval of PKs failed
+  if not placekeys and data.shape[0]:
+    raise Exception(
+      "Unable to perform PlaceKey queries. "
+      "Please check the log and ensure that the PlaceKey API key is valid.")
+
   for pk_dict in placekeys:
     # if the address has a valid placekey, the dict would store placekey: [ID].
     # otherwise, the dict would store error: Invalid address.
