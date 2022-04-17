@@ -1,9 +1,7 @@
 """
 Data wrangling module
 """
-import os.path
 import re
-from enum import Enum
 import pandas as pd
 import glob
 
@@ -42,7 +40,7 @@ def clean_text_data(raw_data: str, regex_replacements: Dict[str, str] = None,
 
 def clean_html(raw_html: str) -> str:
   """
-  Given a string of HTML data, cleans the data using pre-defined HTML wrangling
+  Given a string of HTML data, cleans the data using pre-defined HTML cleaning
   replacements.
   :param raw_html: Raw HTML string to be cleaned
   :return: Cleaned HTML text
@@ -64,6 +62,7 @@ def compile_datasets(datasets: List[pd.DataFrame],
   This method takes a number of datasets and a set of columns to delete from
   each data set if present, and combines all specified datasets into a single
   DataFrame.
+
   :param datasets: A list of datasets to merge.
   :param filter_cols: Columns to remove when filtering the data.
   :return: Compiled data from sources.
@@ -90,7 +89,6 @@ def stack_datasets(stack_dir: str, extension: str = "*") -> pd.DataFrame:
   """
   all_data = [pd.read_csv(filename) for filename in
               glob.iglob(f"{stack_dir}/*.{extension}")]
-
   return compile_datasets(all_data)
 
 
@@ -98,6 +96,7 @@ def filter_rows(dataset: pd.DataFrame,
                 unwanted_values: Dict) -> pd.DataFrame:
   """
   Given a dataset, drop rows that have unwanted values in specified columns.
+
   :param dataset: DataFrame from which to filter matching rows
   :param unwanted_values: Columns and corresponding sets of values to ignore
   :return: A DataFrame with the unwanted rows filtered out.
@@ -128,6 +127,19 @@ def filter_null(dataset: pd.DataFrame, col_names: List[str]) -> pd.DataFrame:
         idxs_to_drop.add(idx)
 
   return dataset.drop(idxs_to_drop)
+
+
+def merge_cols_as_str(dataset: pd.DataFrame, to_merge: List[str],
+                      merged_col: str,
+                      sep: str = " ",
+                      inplace: bool = True,
+                      ) -> pd.DataFrame:
+  for col in to_merge:
+    dataset[col] = dataset[col].astype(str)
+  dataset[merged_col] = dataset[to_merge].agg(sep.join, axis=1)
+  dataset.drop(to_merge, axis=1, inplace=inplace)
+
+  return dataset
 
 
 def trim_string_fields(dataset: pd.DataFrame) -> pd.DataFrame:
