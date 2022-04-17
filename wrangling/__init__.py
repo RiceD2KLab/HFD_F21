@@ -141,3 +141,35 @@ def trim_string_fields(dataset: pd.DataFrame) -> pd.DataFrame:
   """
   return dataset.applymap(lambda x: (x.strip() if isinstance(x, str) else x))
 
+
+def get_only_first_elem(data: pd.DataFrame, col: str,
+                        needs_eval=False, default=0) -> pd.DataFrame:
+  """
+  Replace a list-based DataFrame column with a new column that only contains the
+  first element of each list. For non-list columns, the data is left unchanged.
+  `needs_eval` should be set if the data was previously exported to a CSV and
+  the current column still has all string fields.
+
+  :param data: DataFrame to be updated
+  :param col: list-based column to be updated
+  :param needs_eval: whether the rows of `col` need to be converted to a Python
+    data structure before being processed
+  :return: a DataFrame with the updated column
+  """
+
+  new_data = []
+  for row in data[col]:
+    if needs_eval:
+      if isinstance(row, str):
+        row = eval(row)
+    if isinstance(row, list):
+      if len(row) == 0 or (isinstance(row[0], str) and row[0].strip() == ""):
+        new_data.append(default)
+      else:
+        new_data.append(row[0])
+    else:
+      new_data.append(row)
+
+  data[col] = new_data
+
+  return data
