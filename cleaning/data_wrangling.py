@@ -52,6 +52,7 @@ def clean_html(raw_html: str) -> str:
   :param raw_html: Raw HTML string to be cleaned
   :return: Cleaned HTML text
   """
+  
   # Regex removals (HTML tags)
   regex_replacements = {'<.*?>': ""}
 
@@ -77,28 +78,12 @@ def compile_datasets(datasets: List[pd.DataFrame],
   if filter_cols is None:
     filter_cols = []
 
-  updated_datasets = []
   for dataset in datasets:
-    updated_datasets.append(drop_cols(dataset, filter_cols, inplace=False))
+    for drop_col in filter_cols:
+      if drop_col in dataset:
+        dataset.drop(drop_col, axis=1)
 
-  return pd.concat(updated_datasets)
-
-
-def drop_cols(dataset: pd.DataFrame,
-              cols: List[str] = None,
-              inplace: bool = True) -> pd.DataFrame:
-  """
-  Small helper method for dropping columns from a DataFrame
-  :param dataset: DataFrame from which to drop columns
-  :param cols: names of columns to drop
-  :param inplace: Whether to drop in-place
-  :return: Updated DataFrame with dropped columns
-  """
-  if inplace:
-    dataset.drop(cols, axis=1, inplace=inplace, erros="ignore")
-    return dataset
-  else:
-    return dataset.drop(cols, axis=1, inplace=inplace, errors="ignore")
+  return pd.concat(datasets)
 
 
 def stack_datasets(stack_dir: str, extension: str = "*") -> pd.DataFrame:
@@ -115,10 +100,9 @@ def stack_datasets(stack_dir: str, extension: str = "*") -> pd.DataFrame:
   return compile_datasets(all_data)
 
 
-def filter_rows(dataset: pd.DataFrame,
-                unwanted_values: Dict, inplace: bool = True) -> pd.DataFrame:
+def filter_rows(dataset: pd.DataFrame, unwanted_values: Dict) -> pd.DataFrame:
   """
-  Given a dataset, drop rows that have unwanted values in specified comments.
+  Given a dataset, drop rows that have unwanted values in specified columns.
 
   :param dataset: DataFrame from which to filter matching rows
   :param unwanted_values: Columns and corresponding sets of values to ignore
@@ -131,11 +115,6 @@ def filter_rows(dataset: pd.DataFrame,
       if row[column] in unwanted:
         to_drop.append(idx)
         continue
-
-  if inplace:
-    dataset.drop(to_drop, inplace=inplace)
-    return dataset
-
   return dataset.drop(to_drop)
 
 
@@ -173,27 +152,57 @@ def merge_cols_as_str(dataset: pd.DataFrame, to_merge: List[str],
   return dataset
 
 
-def output_to_excel(dataframe: pd.DataFrame, filename: str) -> None:
+def trim_string_fields(dataset: pd.DataFrame) -> pd.DataFrame:
+  """
+  Trims whitespace off the beginning and end of any string fields in a DataFrame.
+  Args:
+    dataset: DataFrame to be trimmed
+
+  Returns:
+    the trimmed DataFrame
+  """
+  return dataset.applymap(lambda x: (x.strip() if isinstance(x, str) else x))
+
+
+def output_to_excel(dataframe: pd.DataFrame, filename: str,
+                    keep_index=True) -> None:
   """
   Converts a Pandas DataFrame into an Excel spreadsheet.
   :param dataframe: DataFrame to be converted
-  :param filename: name of file to save
+  :param filename: name of file to save, without extension
   :return: None
   """
   base, extension = os.path.splitext(filename)
   if extension != ".xlsx":
     filename = base + ".xlsx"
-  dataframe.to_excel(filename, encoding="utf-8")
+  dataframe.to_excel(filename, encoding="utf-8", index=keep_index)
 
 
-def output_to_csv(dataframe: pd.DataFrame, filename: str) -> None:
+def output_to_csv(dataframe: pd.DataFrame, filename: str,
+                  keep_index=True) -> None:
   """
   Converts a Pandas DataFrame into a CSV file.
   :param dataframe: DataFrame to be converted
-  :param filename: name of file to save
+  :param filename: name of file to save, without an extension
   :return: None
   """
   base, extension = os.path.splitext(filename)
   if extension != ".csv":
     filename = base + ".csv"
-  dataframe.to_csv(filename, encoding="utf-8")
+
+  dataframe.to_csv(filename, encoding="utf-8", index=keep_index)
+
+
+def output_to_pkl(dataframe: pd.DataFrame, filename: str,
+                  keep_index=True) -> None:
+  """
+  Exports a Pandas DataFrame into a Pickle file.
+  Args:
+    dataframe: DataFrame to be converted
+    filename: name of the output file, without an extension
+  """
+  base, extension = os.path.splitext(filename)
+  if extension != ".pkl":
+    filename = base + ".pkl"
+
+  dataframe.to_pickle(filename, encoding="utf-8", index=keep_index)
