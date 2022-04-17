@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, List, Dict
 
 import pandas as pd
 import censusgeocode as cgc
@@ -25,12 +25,15 @@ def split_address(data: pd.DataFrame, col_name: str) -> Tuple[
     address = row[col_name]
     if type(address) is str:
       address = address.split(" ")
+
       # drop incomplete address row
       if len(address) <= 3:
         entries.append(i)
+
     # drop invalid row (most likely NaN)
     else:
       entries.append(i)
+
   # export each datasets
   invalid_df = data.filter(items=entries, axis=0)
   data.drop(entries, inplace=True)

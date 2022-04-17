@@ -8,7 +8,7 @@ import os.path
 
 import pandas as pd
 
-from cleaning.data_wrangling import output_to_csv
+import data_io as io
 
 if __name__ == "__main__":
   # Read the existing INFOR data with placekeys into a dataframe.
@@ -32,13 +32,11 @@ if __name__ == "__main__":
     value='GO')  # Identify blank entries as general occupancy
 
   # Aggregate the data by unique placekey
-  grouped_df: pd.DataFrame  = df.groupby('PlaceKey ID').agg(lambda x: list(x))
+  grouped_df: pd.DataFrame = df.groupby('PlaceKey ID').agg(lambda x: list(x))
 
   # Take the first address, rather than a repeating list
   for x in range(len(grouped_df["Address"])):
     grouped_df["Address"][x] = grouped_df["Address"][x][0]
 
-  print(grouped_df.head())
-
   # Export the aggregated dataframe
-  output_to_csv(grouped_df, "AggregatedINFOR.csv")
+  io.output_to_csv(grouped_df, "AggregatedINFOR.csv")
