@@ -8,8 +8,8 @@ import re
 from statistics import mode, mean
 import math
 
-from cleaning.data_wrangling import output_to_csv
-from feature_engineering import add_binary_feature, sum_data_column_list
+import feature_engineering as fe
+import data_io as io
 
 hcad_property_dict = {
   "Assembly": [610, 611, 620, 630, 680, 685, 690, 8173, 8175, 8176, 8302,
@@ -193,6 +193,14 @@ if __name__ == "__main__":
   # Building area summing
   bld_ar = "act_ar"
   tot_bld_ar = "tot_act_ar"
-  merged_data = sum_data_column_list(merged_data, bld_ar, tot_bld_ar)
+  merged_data = fe.sum_data_column_list(merged_data, bld_ar, tot_bld_ar)
+  merged_data = merged_data.drop(["act_ar"], axis=1)
 
-  output_to_csv(merged_data, "hcad_engineered_data", keep_index=False)
+  merged_data = fe.get_only_first_elem(merged_data,
+                                       "date_erected",
+                                       needs_eval=True)
+  merged_data = fe.get_only_first_elem(merged_data, "tot_inc",
+                                       needs_eval=True)
+  merged_data = merged_data.fillna(value={"tot_inc": 0})
+
+  io.output_to_csv(merged_data, "hcad_engineered_data", keep_index=False)
