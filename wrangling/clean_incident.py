@@ -8,7 +8,7 @@ import pandas as pd
 
 import wrangling
 import data_io as io
-import placekey_tagging
+import placekey_tagging as pk
 
 INCIDENT_DIR = os.path.normpath("Data/Incident Data")
 INCIDENT_ORIG_DIR = os.path.join(INCIDENT_DIR, io.ORIG_DIR)
@@ -80,10 +80,10 @@ def clean_incident(incident_data: List[pd.DataFrame],
   # Placekey Tagging
   address_col = "Basic Incident Full Address"
   incident_full = wrangling.filter_null(incident_full, [address_col])
-  incident_placekey = placekey_tagging.gen_placekey_from_address(incident_full,
-                                                                 address_col)
+  incident_placekey = pk.gen_placekey_from_address(incident_full,
+                                                   address_col)
 
-  with_placekey, without_placekey = placekey_tagging.split_placekey(
+  with_placekey, without_placekey = pk.split_placekey(
     incident_placekey)
 
   if intermediate_output:
@@ -95,8 +95,7 @@ def clean_incident(incident_data: List[pd.DataFrame],
                      os.path.join(intermediate_output_dir, without_pk_name))
 
   # group the data on PlaceKey ID
-  with_placekey = with_placekey.groupby(
-    placekey_tagging.PLACEKEY_FIELD_NAME).agg(lambda x: list(x))
+  with_placekey = with_placekey.groupby(pk.PLACEKEY_FIELD_NAME).agg(list)
   return with_placekey
 
 

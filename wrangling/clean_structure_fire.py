@@ -19,7 +19,7 @@ def clean_structure_fire(
     intermediate_output=False,
     intermediate_output_dir=FIRE_INTER_DIR) -> pd.DataFrame:
   """
-  
+
   :param fire_data:
   :param intermediate_output:
   :param intermediate_output_dir:
@@ -66,8 +66,7 @@ def clean_structure_fire(
                      os.path.join(intermediate_output_dir, wo_pk_filename))
 
   # Aggregate placekey data by placekey
-  aggregated_data = data_with_pk.groupby([pk.PLACEKEY_FIELD_NAME]).agg(
-    lambda x: list(x))
+  aggregated_data = data_with_pk.groupby([pk.PLACEKEY_FIELD_NAME]).agg(list)
 
   return aggregated_data
 

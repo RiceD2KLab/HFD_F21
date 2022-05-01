@@ -42,9 +42,10 @@ def aggregate_av_address_fields(data: pd.DataFrame,
                                     zip_col="ZIP")
 
 
-def clean_address_violation(av_data: List[pd.DataFrame],
-                            intermediate_output=False,
-                            intermediate_output_dir=AV_INTER_DIR) -> pd.DataFrame:
+def clean_address_violation(
+    av_data: List[pd.DataFrame],
+    intermediate_output: bool = False,
+    intermediate_output_dir: str = AV_INTER_DIR) -> pd.DataFrame:
   """
 
   :param av_data:
