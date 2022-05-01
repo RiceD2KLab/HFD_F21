@@ -67,8 +67,8 @@ def gen_placekey_from_address(data: pd.DataFrame,
   # Try to catch situations when the retrieval of PKs failed
   if not placekeys and data.shape[0]:
     raise Exception(
-      "Unable to perform PlaceKey queries. "
-      "Please check the log and ensure that the PlaceKey API key is valid.")
+      "Unable to perform PlaceKey queries. Please check the log above and ensure"
+      "that the PlaceKey API key is valid.")
 
   for pk_dict in placekeys:
     # if the address has a valid placekey, the dict would store placekey: [ID].
