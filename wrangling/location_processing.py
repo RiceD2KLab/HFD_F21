@@ -2,6 +2,17 @@ from typing import Tuple, List, Dict
 
 import pandas as pd
 import censusgeocode as cgc
+import wrangling
+
+
+def coalesce_address(data: pd.DataFrame, new_addr_col: str,
+                     ordered_aggregation_cols: List[str],
+                     na_replacements: Dict[str, str],
+                     zip_col: str) -> pd.DataFrame:
+  data.fillna(value=na_replacements, inplace=True)
+  data[zip_col] = data[zip_col].astype(int).astype(str)
+
+  return wrangling.merge_cols_as_str(data, ordered_aggregation_cols, new_addr_col)
 
 
 def split_address(data: pd.DataFrame, col_name: str) -> Tuple[
