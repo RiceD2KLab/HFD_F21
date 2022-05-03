@@ -1,3 +1,8 @@
+"""
+The purpose of this module is to clean HFD structure fire data in preparation
+for merging by removing unnecessary data and grouping the rows by location using
+PlaceKeys.
+"""
 import os.path
 from typing import List
 
@@ -19,11 +24,39 @@ def clean_structure_fire(
     intermediate_output=False,
     intermediate_output_dir=FIRE_INTER_DIR) -> pd.DataFrame:
   """
+  Prepare HFD structure fire data for merging by dropping unnecessary columns,
+  filtering out cancelled calls and reports from single-family homes, and
+  grouping the data by locations using PlaceKeys. Single-family homes are
+  ignored because they are not a part of the Houston Fire Department's
+  jurisdiction.
 
-  :param fire_data:
-  :param intermediate_output:
-  :param intermediate_output_dir:
-  :return:
+  The structure fire datasets are expected to have the following columns after
+  they are cleaned and compiled:
+    | PlaceKey ID
+    | response_priority_code_final
+    | nfirs_code_final
+    | nfirs_code_description_final
+    | cad_code_final
+    | county_lookup
+    | property_type
+    | action_taken
+    | fire_spread
+    | propertySaved
+    | contentsSaved
+    | totalSaved
+    | occurred_on_local_date
+    | dispatched_on_local_date
+    | latitude
+    | longitude
+    | emergent
+    | complete_address
+
+  :param fire_data: list of HFD structure fire datasets
+  :param intermediate_output: whether to output extra CSV files at
+    intermediate steps
+  :param intermediate_output_dir: directory to output intermediate CSV files
+  :return: a single DataFrame containing the cleaned and compiled HFD structure
+    fire data
   """
   # Define columns to drop from data
   drop_cols = ["incident_id", "alternate_id", "station_id",
@@ -79,4 +112,4 @@ if __name__ == "__main__":
   # Output updated data to CSV
   io.output_to_csv(clean_structure_fire([fire_dataset]),
                    os.path.join(FIRE_CLEAN_DIR,
-                                "Structure Fires 2005-2021 Aggregated with PK"))
+                                "Structure Fire Data Aggregated with PK"))

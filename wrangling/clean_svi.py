@@ -12,10 +12,13 @@ SVI_CLEAN_DIR = os.path.join(SVI_DIR, io.CLEAN_DIR)
 
 def clean_svi(svi_data: pd.DataFrame) -> pd.DataFrame:
   """
+  Perform basic cleaning on census social vulnerability index data. This
+  cleaning process consists only of filtering out unused columns from the data.
 
-  :param svi_data:
-  :return:
+  :param svi_data: SVI data
+  :return: SVI data sans the excluded columns
   """
+
   # Keep only Harris county, filter columns
   svi_harris = svi_data.loc[svi['COUNTY'] == 'Harris']
   return svi_harris[

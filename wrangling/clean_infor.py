@@ -1,8 +1,7 @@
 """
-This file is used to aggregate the INFOR data that was has been provided over common placekeys.
-The file also drops columns that are unnecessary to our final model, and modifies some entries to common formats.
-
-The merged dataset is then output to be observed and viewed.
+This file is used to aggregate the INFOR data that was has been provided over
+common PlaceKeys. The file also drops columns that are unnecessary to our final
+model, and modifies some entries to common formats.
 """
 import os.path
 from typing import List
@@ -99,4 +98,4 @@ if __name__ == "__main__":
 
   # Export the aggregated dataframe
   io.output_to_csv(cleaned_infor_data,
-                   os.path.join(INFOR_CLEAN_DIR, "AggregatedINFOR.csv"))
+                   os.path.join(INFOR_CLEAN_DIR, "INFOR Data Aggregated with PK"))

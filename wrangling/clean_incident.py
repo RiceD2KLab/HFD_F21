@@ -1,5 +1,8 @@
 """
-
+This module contains methods and fields useful for cleaning HFD incident data.
+The main section of this module executes the default cleaning process assuming
+that the original incident data is mounted to the repo and can be found in
+INCIDENT_ORIG_DIR.
 """
 import os.path
 from typing import List
@@ -22,23 +25,26 @@ def clean_incident(incident_data: List[pd.DataFrame],
   """
   Prepare HFD incident data for merging by dropping unnecessary columns,
   filling empty code fields with "None", filtering out single-family homes,
-  tagging the data with PlaceKeys and grouping the data by said placekeys.
+  tagging the data with PlaceKeys and grouping the data by said PlaceKeys.
 
   The incident dataset(s) should have the following columns:
-    Basic Incident Number (FD1)
-    Basic EFD Card Number (FD1.84)
-    Basic Incident Full Street Address
-    Basic Incident Full Address
-    Basic Property Use Code And Description (FD1.46)
-    Basic Apparatus Call Sign List
-    Basic Incident Date Time
-    Basic Property Pre-Incident Value (FD1.37)
-    Basic Property Losses (FD1.35)
-    Basic Incident Type Code And Description (FD1.21)
-    Basic Primary Action Taken Code And Description (FD1.48)
+    | Basic Incident Number (FD1)
+    | Basic EFD Card Number (FD1.84)
+    | Basic Incident Full Street Address
+    | Basic Incident Full Address
+    | Basic Property Use Code And Description (FD1.46)
+    | Basic Apparatus Call Sign List
+    | Basic Incident Date Time
+    | Basic Property Pre-Incident Value (FD1.37)
+    | Basic Property Losses (FD1.35)
+    | Basic Incident Type Code And Description (FD1.21)
+    | Basic Primary Action Taken Code And Description (FD1.48)
 
-  Input: filenames as string type
-  Output: cleaned incident data as cvs file
+  :param incident_data: list of incident datasets to be compiled and cleaned
+  :param intermediate_output: whether to output extra CSV files at
+    intermediate steps
+  :param intermediate_output_dir: directory to output intermediate CSV files
+  :return: a single DataFrame containing the cleaned incident data
   """
   # concatenate datasets, dropping unnecessary columns
   drop_cols = [
@@ -116,4 +122,4 @@ if __name__ == "__main__":
   inc_clean = clean_incident([inc_2018_2021, inc_full2021])
   io.output_to_csv(inc_clean,
                    os.path.join(INCIDENT_CLEAN_DIR,
-                                "Cleaned Incident Data"))
+                                "Incident Data Aggregated with PK"))

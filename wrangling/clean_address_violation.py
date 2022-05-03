@@ -1,5 +1,7 @@
 """
-
+This module cleans the Address and Violation Records data from HFD in
+preparation for merging. This process includes removing unnecessary data and
+grouping the data by location using PlaceKeys.
 """
 import os
 import data_io as io
@@ -27,10 +29,9 @@ def aggregate_av_address_fields(data: pd.DataFrame,
   columns:
     "STNO", "STNAME", "SUFFIX", "CITY", "STATE", "ZIP"
 
-  Input:
-    data: a DataFrame representing the input dataset
-    address_col_name: the name of the new addresss column
-  Return: the input DataFrame, with a concatenated address column
+  :param data: a DataFrame representing the input dataset
+  :param address_col_name: the name of the new address column
+  :return: the input DataFrame, with a concatenated address column
   """
 
   aggregation_cols = ['STNO', 'STNAME', 'SUFFIX', "CITY", "STATE", "ZIP"]
@@ -47,6 +48,21 @@ def clean_address_violation(
     intermediate_output: bool = False,
     intermediate_output_dir: str = AV_INTER_DIR) -> pd.DataFrame:
   """
+  Prepare HFD Address and Violation Records data for merging by removing
+  unnecessary columns from the data, processing the address fields and
+  combining them into a more useful format, tagging the data with PlaceKeys,
+  and grouping the data by said PlaceKeys.
+
+  After cleaning, the resulting data will contain the following columns:
+    | PlaceKey ID
+    | APTYPE
+    | COMMENTS
+    | INSPTYPE
+    | TEAMCODE
+    | VIOLATIONCode - Split 1
+    | VIOLATIONCode
+    | VIOLATIONDESCRIPT
+    | STADDRESS
 
   :param av_data:
   :param intermediate_output:
@@ -66,13 +82,11 @@ def clean_address_violation(
     io.output_to_pkl(av_full,
                      os.path.join(intermediate_output_dir, cleaned_name))
 
-  # Address field aggregation
+  # Address field aggregation and PlaceKey tagging
   address_col = "STADDRESS"
   av_placekey = placekey_tagging.gen_placekey_from_address(
     aggregate_av_address_fields(av_full, address_col),
     address_col)
-
-  # Placekey tagging
   with_placekey, without_placekey = placekey_tagging.split_placekey(av_placekey)
 
   if intermediate_output:
@@ -90,7 +104,7 @@ def clean_address_violation(
             "INSPTYPECAT", "LOC", "Location", "Number of Records",
             "OCCUPANCYTYPE", "PREDIR", "RESULTBY", "RESULTDTTM", "RESULT",
             "SCHEDDTTM", "SUBDIVDESC", "SUPERVISOR", "TEAMDESCRIPTION",
-            "ViolationStatus", "WORKTYPE"], axis=1)
+            "ViolationStatus", "ViolationComment", "WORKTYPE"], axis=1)
 
   with_placekey = with_placekey.groupby(
     placekey_tagging.PLACEKEY_FIELD_NAME).agg(lambda x: list(x))
@@ -110,4 +124,4 @@ if __name__ == "__main__":
   cleaned_av_data = clean_address_violation([av2020, av2021])
   io.output_to_csv(
     cleaned_av_data,
-    os.path.join(AV_CLEAN_DIR, "Address and Violation Data by Property_Test"))
+    os.path.join(AV_CLEAN_DIR, "Address and Violation Data Aggregated with PK"))
