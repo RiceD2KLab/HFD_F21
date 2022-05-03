@@ -1,0 +1,183 @@
+#map {
+    position: relative;
+    top: 35%;
+    left: 10%;
+    height: 600px;
+    width: 80%;
+}
+body {
+    background-color: #ffffff;
+}
+div.upload {
+    width: 40%;
+    position: relative;
+    top: 37%;
+    left: 47%;
+}
+div.searchbar {
+    position: relative;
+    top: 30%;
+    display: flex;
+    justify-content: center;
+}
+div.search {
+    position: relative;
+    top: 5px;
+}
+#infobox1 { 
+  white-space: nowrap; 
+  position: fixed;
+  top: 200px;
+  left: 200px;
+}
+#infobox2 { 
+  white-space: nowrap; 
+  position: fixed;
+  top: 250px;
+  left: 200px;
+}
+#infobox3 { 
+  white-space: nowrap; 
+  position: fixed;
+  top: 300px;
+  left: 200px;
+}
+#infobox4 { 
+  white-space: nowrap; 
+  position: fixed;
+  top: 350px;
+  left: 200px;
+}
+#infobox5 { 
+  white-space: nowrap; 
+  position: fixed;
+  top: 400px;
+  left: 200px;
+}
+#infobox6 { 
+  white-space: nowrap; 
+  position: fixed;
+  top: 450px;
+  left: 200px;
+}
+.child { display: inline-block; }
+#info {
+  position: fixed;
+    top: 160px;
+    left: 200px;
+}
+.text1 {
+  display: inline-block;
+}
+.text2 {
+  display: inline-block;
+}
+#View {
+  position: fixed;
+    top: 320px;
+    right: 260px;
+}
+.button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 32px 64px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 32px;
+    margin: 8px 4px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+  }
+  .button1 {
+    background-color: white; 
+    color: black; 
+    border: 2px solid #4CAF50;
+  }
+  .button1:hover {
+    background-color: #4CAF50;
+    color: white;
+  }
+  .button2 {
+    background-color: white; 
+    color: black; 
+    border: 2px solid #4CAF50;
+  }
+  .button2:hover {
+    background-color: #4CAF50;
+    color: white;
+  }
+  .button3 {
+    background-color: white; 
+    color: black; 
+    border: 2px solid #4CAF50;
+  }
+  .button3:hover {
+    background-color: #4CAF50;
+    color: white;
+  }
+  .button4 {
+    background-color: white; 
+    color: black; 
+    border: 2px solid #4CAF50;
+  }
+  .button4:hover {
+    background-color: #4CAF50;
+    color: white;
+  }
+  div.float {
+    width: 100%;
+    height: 900px;
+    display: flex;
+    justify-content: space-around;
+  }
+  div.inv {
+    width: 100%;
+    height: 900px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  div.fixed {
+    position: relative;
+    top: 45%;
+  }
+  div.sear {
+    width: 100%;
+    height: 900px;
+  }
+  div.guide {
+    width: 100%;
+    height: 900px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  div.choices {
+    display: flex;
+    justify-content: space-around;
+  }
+  #table1 {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+  }
+  div.line {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  div.element {
+    text-align: center;
+    width: 30%;
+  }
+  div.bigelement {
+    width: 60%;
+    text-align: center;
+  }
+  div.test {
+    position: relative;
+    width: 30%;
+    left: 40%;
+  }
