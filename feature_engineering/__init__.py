@@ -95,7 +95,10 @@ def sum_data_column_list(data: pd.DataFrame, col: str, out_col: str = None):
         col_sums.append(row)
     else:
       elems = eval(str(row))
-      col_sums.append(sum(elems))
+      try:
+        col_sums.append(sum(elems))
+      except TypeError:
+        col_sums.append(0)
 
   data[out_col] = col_sums
   return data
@@ -149,3 +152,62 @@ def engineer_time_data(data: pd.DataFrame, col: str, cutoffs: Iterable[int],
   incident_time_col = data["Basic Incident Date Time"]
 
   raise NotImplementedError
+
+
+def get_only_first_elem(data: pd.DataFrame, col: str,
+                        needs_eval=False, default=0) -> pd.DataFrame:
+  """
+  Replace a list-based DataFrame column with a new column that only contains the
+  first element of each list. For non-list columns, the data is left unchanged.
+  `needs_eval` should be set if the data was previously exported to a CSV and
+  the current column still has all string fields.
+
+  :param data: DataFrame to be updated
+  :param col: list-based column to be updated
+  :param needs_eval: whether the rows of `col` need to be converted to a Python
+    data structure before being processed
+  :return: a DataFrame with the updated column
+  """
+
+  new_data = []
+  for row in data[col]:
+    if needs_eval:
+      if isinstance(row, str):
+        row = eval(row)
+    if isinstance(row, list):
+      if len(row) == 0 or (isinstance(row[0], str) and row[0].strip() == ""):
+        new_data.append(default)
+      else:
+        new_data.append(row[0])
+    else:
+      new_data.append(row)
+
+  data[col] = new_data
+
+  return data
+
+def get_only_last_elem(data: pd.DataFrame, column: str):
+  """
+  Given a column from a DataFrame in which each row is either a list or NaN,
+  edit the column so that each row contains either the last entry in the list or NaN.
+
+  :param data: pandas dataframe, contains column to be analyzed
+  :param column: string, name of column to be updated
+
+  Returns data with the row values of feature edited to be either the last entry of the list or NaN.
+  """
+
+  results = data[column]
+  updated_results = []
+
+  for idx, val in results.iteritems():
+    if type(val) == float:
+      updated_results.append(val)
+
+    else:
+      new_res = literal_eval(val)[-1]
+      updated_results.append(new_res.replace(' ', ''))
+
+  data[column] = updated_results
+
+  return data

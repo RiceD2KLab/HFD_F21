@@ -1,4 +1,5 @@
-import codecs
+import codecs, data_io
+import os
 from json.encoder import py_encode_basestring_ascii
 from typing import List, Iterable
 
@@ -13,64 +14,23 @@ from statistics import mode, mean
 import math
 
 import feature_engineering as fe
-from cleaning.data_wrangling import output_to_csv
 from feature_engineering import hfd_incident_action_taken
+from wrangling import full_merge
 
 JAN_01_00 = 946684800
 
 
-# TOTAL COUNT COLUMNS
-
-# Create Column of Total Number of Inspections
-
-# full_data['Total_Inspections'] = full_data['INSPTYPE'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
-
-# Create Column of Total Number of Incidents
-
-# full_data['Total_Incidents'] = full_data['Basic Incident Number (FD1)'].apply(lambda x: len(literal_eval(x)) if type(x)!=float else 0)
-
-# Create Column of Total Number of Violations
-
-# full_data['Total_Violations'] = full_data['VIOLATIONCode'].apply(lambda x: sum(1 for list_item in eval(x) if type(list_item)!=float) if type(x)!=float else 0)
-
-# RESULT VARIABLE
-
-def feat_recent(data, feature):
+def feat_building_code(data: pd.DataFrame, column: str) -> pd.DataFrame:
   """
-  Given a column from a dataframe in which each row is either a list or NaN,
-  edit the column so that each row contains either the last entry in the list or NaN.
+  Given a merged property dataset and a specified column with property use code
+  data, counts the gives a categorical name to element in the specified column.
 
-  data: pandas dataframe, contains column to be analyzed
-  feature: string, name of feature to be edited
-
-  Returns data with the row values of feature edited to be either the last entry of the list or NaN.
+  :param data: merged property dataset
+  :param column: column with property use data
+  :return: dataset with new categorical column of the INFOR building category
+    for each property (row) based on the property use code column.
   """
-
-  results = data[feature]
-  updated_results = []
-
-  for idx, val in results.iteritems():
-    if type(val) == float:
-      updated_results.append(val)
-
-    else:
-      new_res = literal_eval(val)[-1]
-      updated_results.append(new_res.replace(' ', ''))
-
-  data[feature] = updated_results
-
-  return data
-
-
-# BUILDING CODE VARIABLE
-
-def feat_building_code(data):
-  """
-  Input: Merged Property Dataset
-  Output: Merged Property Dataset with new categorical column of the INFOR building category for each
-  property (row) based on the Basic Property Use Code And Description (FD1.46) column.
-  """
-  property_col = data.loc[:, 'Basic Property Use Code And Description (FD1.46)']
+  property_col = data.loc[:, column]
 
   code_list = []
   for row in property_col:
@@ -114,20 +74,21 @@ def feat_building_code(data):
       building_category.append("Outside or Special Property")
 
   data['Property_Code'] = building_category
+  return data
 
 
-# YUXIN: TRUE INSPECTION VARIABLE
-
-def add_true_incident(data, feature):
+def add_true_incident(data: pd.DataFrame, column: str) -> pd.DataFrame:
   """
-  Given a file name and a feature name, add a new column showing the result of feature engineering.
+  Given a DataFrame with aggregated incident data and a feature name, add a new
+  column to the DataFrame that counts the number of "true" incidents that a
+  given row contains.
 
-  file: the name of the fulled merged dataset
-  feature: the name of the feature being engineered
-
-  Return data with the new feature engineering output.
+  :param data: the name of the fulled merged dataset
+  :param column: the name of the column to check
+  :return: data with the new feature engineering output.
   """
-  col = data[feature]
+
+  col = data[column]
   newcol = []
   for i in range(len(col)):
     count = 0
@@ -143,13 +104,16 @@ def add_true_incident(data, feature):
   return data
 
 
-# JOSH: PRIMARY ACTION TAKEN
-# Methods in freature_engineeering/hfd_incident_action_taken.py
-
-# ANNITA: STRUCTURE FIRE VARIABLES
-def fire_spread_property_lost(df):
+def fire_spread_property_lost(df: pd.DataFrame) -> pd.DataFrame:
   """
-  Adds a "Binary_Property_Lost" column to the input dataframe encoding whether property lost has ever been recorded for a given property. Adds a "Fire_Spread_Mean" column to the input dataframe encoding the degree of fire spread with a scale of 1 to 5.
+  Adds a "Binary_Property_Lost" column to the input DataFrame encoding whether
+  property lost has ever been recorded for a given property. Also adds a
+  "Fire_Spread_Mean" column that encodes the degree of fire spread with on a
+  scale from 1 to 5.
+
+  :param df: DataFrame including structure fire data from columns named
+    "fire_spread" and "totalSaved"
+  :return: updated DataFrame with property damage and fire spread data
   """
   df['Fire_Spread_Mean'] = nan
   df['Binary_Property_Lost'] = nan
@@ -174,17 +138,15 @@ def fire_spread_property_lost(df):
   return df
 
 
-# JARRETT: TIME VARIABLES
-def add_incident_inspection_time(data):
+def add_incident_inspection_time(data: pd.DataFrame) -> pd.DataFrame:
   """
-  Given a file name and a feature name, add new columns showing the result of feature engineering.
+  Given a DataFrame that includes time-based columns "Basic Incident Date Time"
+  and "Processed / Last Inspected", adds new columns to the DataFrame showing
+  binary variables for whether a certain property was inspected or had an
+  incident in the last 1, 2, 3, and 4 years.
 
-  file: the name of the fulled merged dataset
-  feature: the name of the feature being engineered
-
-  Return data with the new feature engineering output, which has a binary column to indicate if a property
-  has had an inspection in the last year, 2 years, and 5 years, and if a property has had an incident in the
-  past year, 2 years, or 5 years.
+  :param data: DataFrame with time-based data for incidents and inspections
+  :return: updated DataFrame with time-based engineered features
   """
   incidentTime_col = data.loc[:, 'Basic Incident Date Time']
   incidentTime_1yr = []
@@ -320,7 +282,8 @@ def add_incident_inspection_time(data):
 
 
 if __name__ == "__main__":
-  full_data = pd.read_csv('full_merge_no_duplicates.csv')
+  full_data = pd.read_csv(
+    os.path.join(full_merge.MERGED_DIR, 'Full Merged Data.csv'))
 
   # Inspection Status
   full_data = fe.add_binary_feature(full_data, 'INSPTYPE', 'InspectionStatus')
@@ -340,10 +303,11 @@ if __name__ == "__main__":
       x) != float else 0)
 
   # Result Variable
-  full_data = feat_recent(full_data, 'Result')
+  full_data = fe.get_only_last_elem(full_data, 'Result')
 
   # Building Codes
-  feat_building_code(full_data)
+  property_use_col = 'Basic Property Use Code And Description (FD1.46)'
+  feat_building_code(full_data, property_use_col)
 
   # Time Variables
   full_data = add_incident_inspection_time(full_data)
@@ -367,4 +331,6 @@ if __name__ == "__main__":
     hfd_incident_action_taken.get_actions_taken_group)
 
   # Final output
-  output_to_csv(full_data, "Full_Merged_Data", keep_index=False)
+  data_io.output_to_csv(full_data, os.path.join(full_merge.MERGED_DIR,
+                                                "HFD Engineered Data"),
+                        keep_index=False)

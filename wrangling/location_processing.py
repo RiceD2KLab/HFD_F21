@@ -1,36 +1,71 @@
-from typing import Tuple
+"""
+Location processing module
+"""
+from typing import Tuple, List, Dict
 
 import pandas as pd
 import censusgeocode as cgc
+import wrangling
+
+
+def coalesce_address(data: pd.DataFrame, new_addr_col: str,
+                     ordered_aggregation_cols: List[str],
+                     na_replacements: Dict[str, str],
+                     zip_col: str) -> pd.DataFrame:
+  """
+  Coalesce a number of address columns into a single column, dropping the
+  original address columns. This method also includes special processing for ZIP
+  code columns, ensuring that they are integral, and converting them to strings.
+
+  :param data: DataFrame which contains the original address columns
+  :param new_addr_col: name of the new address field
+  :param ordered_aggregation_cols: all address fields, in the order
+    that they should be aggregated
+  :param na_replacements: Dictionary of values with which to replace NaN or
+    empty fields with
+  :param zip_col: the name of the column containing ZIP code data
+  :return: Updated DataFrame with the newly constructed address field
+  """
+
+  # Data preprocessing
+  data.fillna(value=na_replacements, inplace=True)
+  data[zip_col] = data[zip_col].astype(int).astype(str)
+
+  return wrangling.merge_cols_as_str(data, ordered_aggregation_cols,
+                                     new_addr_col)
 
 
 def split_address(data: pd.DataFrame, col_name: str) -> Tuple[
   pd.DataFrame, pd.DataFrame]:
   """
   Split the input dataset based on whether the address column is complete.
-  We assume the address column to take the format [STREET] [CITY] [STATE] [ZIP]
+  We assume the address column to take the format
+
+    [STREET ADDRESS] [CITY] [STATE] [ZIP]
+
   and is separated by space. If the address is not of this format, we categorize
   the row as invalid.
 
-  Input:
-    data - a DataFrame representing the input dataset
-    col_name - column name of the address column
-  Return:
-    A tuple of two DataFrames:
-      data - a DataFrame containing rows with valid addresses
-      invalid_df - a DataFrame containing rows with invalid addresses
+  :param data: a DataFrame representing the input dataset
+  :param col_name: column name of the address column
+  :return: A tuple of two DataFrames:
+      <br/> (a) data:  a DataFrame containing rows with valid addresses
+      <br/> (b) invalid_df - a DataFrame containing rows with invalid addresses
   """
   entries = []
   for i, row in data.iterrows():
     address = row[col_name]
     if type(address) is str:
       address = address.split(" ")
+
       # drop incomplete address row
       if len(address) <= 3:
         entries.append(i)
+
     # drop invalid row (most likely NaN)
     else:
       entries.append(i)
+
   # export each datasets
   invalid_df = data.filter(items=entries, axis=0)
   data.drop(entries, inplace=True)

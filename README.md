@@ -1,9 +1,16 @@
 # Houston Fire Department - SPRING 2022
-#### Members: Annita Chang, Joshua Washington, Jarrett Prchal, Tessa Cannon, Yuxin Gong, Ziyana Samanani.
+#### Members: Tessa Cannon, Annita Chang, Yuxin Gong, Jarrett Prchal, Ziyana Samanani, Joshua Washington
 
-This is our repository that contains the code for our capstone project: <br /> **Analyzing Fire Inspections for the Houston Fire Department**
+This is the repository that contains the code for our capstone project: <br /> **Analyzing Fire Inspections for the Houston Fire Department**
 
-DISCLAIMER: The Houston Fire Department data is private and cannot be posted to a public repository. In order to run our files and generate diagrams based on the dataset we were given, please locate and download the files `Address_&_Violation_Records_data 2020.csv`, `Address_&_Violation_Records_data 2021.csv`, `FF--D2K-2021-data_full year 2021.csv`, and `D2K Incident Data July 2018 to JAug 10 2021_Export.csv` from the Team HFD Microsoft Teams.
+DISCLAIMER: The Houston Fire Department data is private and cannot be posted to a public repository. In order to run our files and generate diagrams based on the dataset we were given, please locate and download the files from the Data folder in Team HFD Microsoft Teams General Drive. We also used three publicly available datasets `building_other.txt`, `building_res.txt` `real_acct.txt` and `SVI_Harris.csv` that are available on Teams and the [HCAD website](https://hcad.org/pdata/pdata-property-downloads.html).
+
+Incident: `D2K Incident Data July 2018 to JAug 10 2021_Export.csv` under 
+Inspection: `INFOR Data by Months`
+Violation: `Address_&_Violation_Records_data 2020.csv`, `Address_&_Violation_Records_data 2021.csv`
+Struct Fire (fire only incident): `Structure Fires 2005-2021`
+HCAD: `building_other.txt`, `real_acct.txt`
+SVI: `SVI_Harris.csv`
 
 ## Running the code
 
@@ -22,24 +29,64 @@ pip install glob
 pip install numpy
 ```
 
-### Data Preprocessing
-#### Stack violation and incident data
-To stack and clean violation records and incident data, you may run `clean_addressviolation_incident.py` Be sure that the following files can be found in `data/sp22data`:
-* `Address_&_Violation_Records_data 2020.csv`
-* `Address_&_Violation_Records_data 2021.csv`
-* `FF--D2K-2021-data_full year 2021.csv`
-* `D2K Incident Data July 2018 to JAug 10 2021_Export.csv`
+### Data Directory Format
+Before running the code, ensure that the project data is mounted to the repository.
+For smooth operation, the data should have the following folder structure:
 
-Running this file will result in the creation of the following cleaned files:
-* `Non-Residential Incident Data 2018_2021.csv`
-* `Cleaned Addresss and Violation Data 2020_2021.csv`
+```
+Data/
+  Address and Violation Records Data/
+    Original Datasets/
+    Intermediate Datasets/
+    Cleaned Datasets/
+  Incident Data/
+    Original Datasets/
+    Intermediate Datasets/
+    Cleaned Datasets/
+  INFOR Inspection Data/
+    Original Datasets/
+    Intermediate Datasets/
+    Cleaned Datasets/
+   Structure Fire Data/
+    Original Datasets/
+    Intermediate Datasets/
+    Cleaned Datasets/
+  Public Data/
+    HCAD/
+      Original Datasets/
+      Intermediate Datasets/
+      Cleaned Datasets/
+    SVI/
+      Original Datasets/
+      Intermediate Datasets/
+      Cleaned Datasets/
+  Merged Data/   
+```
 
-#### Violation data comment cleaning
-To preprocess the address and violation comments, run `violation_comment_cleaning.py`. Pass in any number of CSV files with comments data to stack and process comments. By default, the cleaned comments data will be output to two separate files:
-* `ViolationDataCleanedComments.csv` contains all of the original data with the cleaned comments
-* `ViolationDataCleanedComments_comments.csv` contains only cleaned comments data, without the other columns
+### Guide through different directories
+```
+data_io: IO modules for processing and data output
+wrangling: codes used in data preprocessing
+exploration: codes used in visualization
+feature_engineering: codes used for generating binary / numeric / categorical variables on different datasets
+modeling: code used in our modeling process
+interactive map: code used in generating our interactive map
+```
+#### Data Preprocessing
+##### Clean Data
+To clean each of the six datasets, run `clean_<data_name>.py` under `wrangling`.
+##### Merge six datasets
+To merge datasets, run `full_merge.py` under `wrangling` after the data cleaning has been completed for all datasets.
 
-#### Add Placekey to data rows with address fields
-To add Placekeys for locations in the Address and Violation data, run `hfd_data_placekey_tagging.py`. Be sure that `Cleaned Address and Violation Data 2020_2021.csv` is in your working directory. This file will output two separate CSV files:
-* `Cleaned Address and Violation Data 2020_2021 Placekey.csv` contains rows with Placekey data
-* `Cleaned Address and Violation Data 2020_2021 No Placekey.csv` contains rows for which no Placekeys were obtained
+#### Visualization and Feature Engineering
+##### Building Code visualization
+Run `building_codes.py` under exploration to generate building code bar plot in our report.
+Run `hfd_incident_action_taken.py` under `feature_engineering` to generate HFD action taken plot in our report.
+Interactive map has an independent README.md under Interactive map folder.
+##### Feature Engineering
+The feature engineering code is split between two files: `hfd_engineering.py` and `hcad_engineering.py` in the `feature_engineering` directory.
+`hfd_engineering` performs feature engineering based on HFD data, while `hcad_engineering` performs feature engineering based on HCAD data.
+For smooth execution of feature engineering, run `hfd_engineering.py` after the merge, followed by `hcad_engineering.py`.
+
+#### Modeling
+Run `predictive_modeling.py` under modeling to generate our models built.

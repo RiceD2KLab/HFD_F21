@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 from feature_engineering import frequency_histogram_column_split, \
   frequency_histogram_column
-from cleaning.data_wrangling import output_to_csv
+from data_io import output_to_csv
 
 groupings = {"N": "None", "0": "Other", "1": "FireControl",
              "2": "Search & Rescue", "3": "EMS and Transport",
@@ -37,7 +37,7 @@ def action_taken_binary_plot(data: pd.DataFrame, hist_col_name: str):
 
 
 def total_actions_taken_plot(data: pd.DataFrame,
-                             hist_col_name: str) -> pd.DataFrame:
+                             hist_col_name: str):
   """
 
   :param data:
