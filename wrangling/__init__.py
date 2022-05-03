@@ -13,6 +13,7 @@ def clean_text_data(raw_data: str, regex_replacements: Dict[str, str] = None,
   """
   Given a raw data string, cleans the data by using the regex and verbatim
   replacements.
+
   :param raw_data: Data to be cleaned
   :param regex_replacements: Dictionary of regex replacements to make
   :param verbatim_replacements: Dictionary of verbatim replacements to make
@@ -99,7 +100,7 @@ def filter_rows(dataset: pd.DataFrame,
 
   :param dataset: DataFrame from which to filter matching rows
   :param unwanted_values: Columns and corresponding sets of values to ignore
-  :return: A DataFrame with the unwanted rows filtered out.
+  :return: DataFrame with the unwanted rows filtered out.
   """
   for column, unwanted in unwanted_values.items():
     for item in unwanted:
@@ -113,10 +114,9 @@ def filter_null(dataset: pd.DataFrame, col_names: List[str]) -> pd.DataFrame:
   Given a dataset, drop rows which have NaN or empty entries in any of the
   specified columns.
 
-  dataset: string, path or name of csv dataset
-  col_names: list, columns corresponding to components of an address
-
-  Returns DataFrame with non-excluded rows.
+  :param dataset: Pandas DataFrame
+  :param col_names: list, columns corresponding to components of an address
+  :return: DataFrame with non-excluded rows.
   """
   null_values = dataset.isnull()
   idxs_to_drop = set([])
@@ -134,6 +134,19 @@ def merge_cols_as_str(dataset: pd.DataFrame, to_merge: List[str],
                       sep: str = " ",
                       inplace: bool = True,
                       ) -> pd.DataFrame:
+  """
+  Merges a list of columns, `to_merge` into a single column, `merged_col` using
+  `sep` as the separator.
+
+  :param dataset: a Pandas DataFrame
+  :param to_merge: a list of columns to merge
+  :param merged_col: the name of the column that will hold the merged result
+  :param sep: separator between two fields of the merged column
+  :param inplace: whether to merge the data in place or not
+  :return: a DataFrame the list of columns to merge being replaced with a single
+    column of merged data
+  """
+
   for col in to_merge:
     dataset[col] = dataset[col].astype(str)
   dataset[merged_col] = dataset[to_merge].agg(sep.join, axis=1)
@@ -145,11 +158,9 @@ def merge_cols_as_str(dataset: pd.DataFrame, to_merge: List[str],
 def trim_string_fields(dataset: pd.DataFrame) -> pd.DataFrame:
   """
   Trims whitespace off the beginning and end of any string fields in a DataFrame.
-  Args:
-    dataset: DataFrame to be trimmed
 
-  Returns:
-    the trimmed DataFrame
+  :param dataset: DataFrame to be trimmed
+  :return: the DataFrame updated with trimmed fields
   """
   return dataset.applymap(lambda x: (x.strip() if isinstance(x, str) else x))
 
@@ -166,6 +177,7 @@ def get_only_first_elem(data: pd.DataFrame, col: str,
   :param col: list-based column to be updated
   :param needs_eval: whether the rows of `col` need to be converted to a Python
     data structure before being processed
+  :param default: the default replacement value if the data is an empty list
   :return: a DataFrame with the updated column
   """
 
