@@ -185,3 +185,29 @@ def get_only_first_elem(data: pd.DataFrame, col: str,
   data[col] = new_data
 
   return data
+
+def get_only_last_elem(data: pd.DataFrame, column: str):
+  """
+  Given a column from a DataFrame in which each row is either a list or NaN,
+  edit the column so that each row contains either the last entry in the list or NaN.
+
+  :param data: pandas dataframe, contains column to be analyzed
+  :param column: string, name of column to be updated
+
+  Returns data with the row values of feature edited to be either the last entry of the list or NaN.
+  """
+
+  results = data[column]
+  updated_results = []
+
+  for idx, val in results.iteritems():
+    if type(val) == float:
+      updated_results.append(val)
+
+    else:
+      new_res = literal_eval(val)[-1]
+      updated_results.append(new_res.replace(' ', ''))
+
+  data[column] = updated_results
+
+  return data
