@@ -28,13 +28,14 @@ pip install glob
 pip install numpy
 ```
 ## Guide through different directories
+```
 data_io: IO modules for processing and data output
 wrangling: codes used in data preprocessing
 exploration: codes used in visualization
 feature_engineering: codes used for generating binary / numeric / categorical variables on different datasets
 modeling: code used in our modeling process
 interactive map: code used in generating our interactive map
-
+```
 ### Data Preprocessing
 #### Clean Data
 To clean each of the six datasets, run clean_data_name.py under wrangling.
