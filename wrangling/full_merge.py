@@ -14,6 +14,8 @@ import placekey_tagging as pk
 from wrangling import clean_hcad, clean_infor, clean_incident, \
   clean_structure_fire, clean_address_violation
 
+MERGED_DIR = "Merged Data"
+
 if __name__ == "__main__":
   # Download placekey-tagged and cleaned datasets
   hcad_df = pd.read_csv(
@@ -50,4 +52,5 @@ if __name__ == "__main__":
              'complete_address', 'Address', 'Basic Incident Full Address'])
 
   # Export merged dataset
-  merge_result4.to_csv('Full Merged Data.csv', index=False)
+  merge_result4.to_csv(os.path.join(MERGED_DIR, 'Full Merged Data.csv'),
+                       index=False)

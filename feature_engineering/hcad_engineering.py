@@ -1,3 +1,4 @@
+import os
 from ast import literal_eval
 from typing import Dict
 
@@ -9,6 +10,7 @@ from statistics import mode, mean
 import math
 
 import feature_engineering as fe
+from wrangling import full_merge
 import data_io as io
 
 hcad_property_dict = {
@@ -92,7 +94,8 @@ def update_property_code(data: pd.DataFrame, codes: Dict[int, str]):
 
 
 if __name__ == "__main__":
-  merged_data = pd.read_csv('Full_Merged_Data.csv')
+  merged_data = pd.read_csv(
+    os.path.join(full_merge.MERGED_DIR, "HFD Engineered Data.csv"))
 
   # Filter irrelevant rows
   merged_data = merged_data[
@@ -203,4 +206,6 @@ if __name__ == "__main__":
                                        needs_eval=True)
   merged_data = merged_data.fillna(value={"tot_inc": 0})
 
-  io.output_to_csv(merged_data, "hcad_engineered_data", keep_index=False)
+  io.output_to_csv(merged_data,
+                   os.path.join(full_merge.MERGED_DIR, "Final Engineered Data"),
+                   keep_index=False)
