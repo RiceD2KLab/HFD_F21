@@ -90,5 +90,5 @@ For smooth execution of feature engineering, run `hfd_engineering.py` after the 
 
 #### Modeling
 Run `predictive_modeling.py` under modeling to generate our modeling dataset. The built models are again split between 
-two files. `inspection_models.py` performs the inspection predictive models and `incident_models.py` performs the
-incident specific models. 
+two files. Using the dataset created in `predictive_modeling.py` as the imported dataset, run `inspection_models.py` 
+to perform the inspection predictive models and `incident_models.py` to perform the incident specific models. 
