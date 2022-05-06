@@ -89,4 +89,6 @@ The feature engineering code is split between two files: `hfd_engineering.py` an
 For smooth execution of feature engineering, run `hfd_engineering.py` after the merge, followed by `hcad_engineering.py`.
 
 #### Modeling
-Run `predictive_modeling.py` under modeling to generate our models built.
+Run `predictive_modeling.py` under modeling to generate our modeling dataset. The built models are again split between 
+two files. `inspection_models.py` performs the inspection predictive models and `incident_models.py` performs the
+incident specific models. 

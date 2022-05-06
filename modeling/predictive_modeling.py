@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.metrics import balanced_accuracy_score
 
-data = pd.read_csv('Working_Data_040422.csv')
+data = pd.read_csv('Final Engineered Data')
 
 # Drop old columns
 data = data.drop(['dscr', 'act_ar'], axis=1)
@@ -57,7 +57,7 @@ model_data = pd.concat(
 # Drop unnecessary columns
 model_data = model_data.drop(
   ['STADDRESS_x', 'impr_mdl_cd', 'Property_Code', 'BuildingQuantity',
-   'RemodelStatus'], axis=1)
+   'RemodelStatus',2,2,'incidentTime_3yr.1','incidentTime_4yr.1'], axis=1)
 
 # Export
-model_data.to_csv('Modeling_Data_04102022.csv', index=False)
+model_data.to_csv('Modeling Data', index=False)

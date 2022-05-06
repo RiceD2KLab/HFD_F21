@@ -12,7 +12,7 @@ import matplotlib as plt
 pd.set_option('display.max_columns', 100)
 
 # loading the dataset
-df = pd.read_csv('Modeling_Data_04142022.csv')
+df = pd.read_csv('Modeling Data')
 
 # INSPECTION MODEL
 
